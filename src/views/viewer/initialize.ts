@@ -67,6 +67,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   labelRenderer.domElement.style.pointerEvents = 'none';
   document.body.appendChild(labelRenderer.domElement);
  
+  
   // Model
   let model: THREE.Object3D;
   let mixer: THREE.AnimationMixer;
@@ -81,7 +82,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     // 애니메이션 데이터를 로드합니다.
     const clips = gltf.animations;
 
-    
+
     if (clips.length) {
       // 애니메이션 클립을 Mixer에 추가합니다.
       mixer.clipAction(clips[0]).play();
