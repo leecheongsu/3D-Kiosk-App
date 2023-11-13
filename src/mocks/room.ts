@@ -1,0 +1,187 @@
+import { RoomMenu } from '../types/menu';
+
+// room menu mock data
+export const mainMocks: RoomMenu[] = [
+  {
+    id: 'main_24',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_2',
+    order: 2,
+    depth: 0,
+    title: '배치사례1',
+    action: 'none',
+    version: 1,
+  },
+  {
+    id: 'main_21',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_2',
+    order: 2,
+    depth: 0,
+    title: '배치사례2',
+    action: 'none',
+    version: 1,
+  },
+  {
+    id: 'main_22',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_2',
+    order: 2,
+    depth: 0,
+    title: '배치사례3',
+    action: 'none',
+    version: 1,
+  },
+  {
+    id: 'main_23',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_2',
+    order: 2,
+    depth: 0,
+    title: '배치사례4',
+    action: 'none',
+    version: 1,
+  },
+  {
+    id: 'main_1',
+    roomId: 'R1001',
+    hasChild: true,
+    parentId: 'main_1',
+    order: 1,
+    depth: 0,
+    title: '공간정보',
+    action: 'none',
+    version: 1,
+  },
+  {
+    id: 'main_2',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_2',
+    order: 2,
+    depth: 0,
+    title: '배치사례',
+    action: 'none',
+    version: 1,
+  },
+  {
+    id: 'main_3',
+    roomId: 'R1001',
+    hasChild: true,
+    parentId: 'main_3',
+    order: 3,
+    depth: 0,
+    title: '배치시뮬레이션',
+    action: 'none',
+    version: 1,
+  },
+];
+
+export const subMocks: RoomMenu[] = [
+  // 공간정보
+  {
+    id: 'sub_1',
+    roomId: 'R1001',
+    hasChild: true,
+    parentId: 'main_1',
+    order: 1,
+    depth: 1,
+    title: '상세정보',
+    action: 'none', // 일단 none
+    version: 1,
+  },
+  {
+    id: 'sub_2',
+    roomId: 'R1001',
+    hasChild: true,
+    parentId: 'main_1',
+    order: 2,
+    depth: 1,
+    title: '평면도',
+    action: 'none', // 일단 none
+    version: 1,
+  },
+  // 배치사례
+  // 배치시뮬레이션
+  {
+    id: 'sub_3',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_3',
+    order: 1,
+    depth: 1,
+    title: '101, 102, 103, 104 (공통)',
+    action: 'none', // 일단 none
+    version: 1,
+  },
+  {
+    id: 'sub_4',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_3',
+    order: 2,
+    depth: 1,
+    title: '101+102, 103+104 (공통)',
+    action: 'none', // 일단 none
+    version: 1,
+  },
+  {
+    id: 'sub_5',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_3',
+    order: 3,
+    depth: 1,
+    title: '101+102+103',
+    action: 'none', // 일단 none
+    version: 1,
+  },
+  {
+    id: 'sub_9',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_3',
+    order: 7,
+    depth: 1,
+    title: '101, 102, 103, 104++9',
+    action: 'none', // 일단 none
+    version: 1,
+  },
+  {
+    id: 'sub_6',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_3',
+    order: 4,
+    depth: 1,
+    title: '101+102+103+104+105+106+107+108+109',
+    action: 'none', // 일단 none
+    version: 1,
+  },
+  {
+    id: 'sub_7',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_3',
+    order: 5,
+    depth: 1,
+    title: '101, 102, 103, 104++7',
+    action: 'none', // 일단 none
+    version: 1,
+  },
+  {
+    id: 'sub_8',
+    roomId: 'R1001',
+    hasChild: false,
+    parentId: 'main_3',
+    order: 6,
+    depth: 1,
+    title: '101, 102, 103, 104++8',
+    action: 'none', // 일단 none
+    version: 1,
+  },
+];

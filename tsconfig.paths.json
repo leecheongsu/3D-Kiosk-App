@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@commands/*": ["commands/*"],
+      "@components/*": ["components/*"],
+      "@constants/*": ["constants/*"],
+      "@eventHandler/*": ["eventHandler/*"],
+      "@lib/*": ["lib/*"],
+      "@plugins/*": ["plugins/*"],
+      "@reducers/*": ["reducers/*"],
+      "@sagas/*": ["sagas/*"],
+      "@sdk-components/*": ["sdk-components/*"],
+      "@views/*": ["views/*"],
+      "@hooks/*": ["hooks/*"],
+      "@styles/*": ["styles/*"],
+      "@utils/*": ["utils/*"],
+      "@store": ["store/index.ts"],
+      "@images/*": ["images/*"],
+      "@assets/*": ["assets/*"],
+      "@src/types/*": ["types/*"],
+      "@mocks/*": ["mocks/*"]
+    }
+  }
+}

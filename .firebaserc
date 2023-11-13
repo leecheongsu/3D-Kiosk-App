@@ -1,0 +1,22 @@
+{
+  "projects": {
+    "default": "onna-b7783",
+    "onna": "onna-b7783"
+  },
+  "targets": {
+    "onna": {
+      "hosting": {
+        "viewer": [
+          "onna-viewer"
+        ]
+      }
+    },
+    "onna-b7783": {
+      "hosting": {
+        "viewer": [
+          "/build"
+        ]
+      }
+    }
+  }
+}
