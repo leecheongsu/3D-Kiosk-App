@@ -14,8 +14,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     throw new Error('No canvas found');
   }
 
-  console.log('icons: length' + icons.length);
-
   // Renderer
   const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -62,12 +60,11 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   // CSS2DRenderer
   const labelRenderer = new CSS3DRenderer();
   labelRenderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(labelRenderer.domElement);
   labelRenderer.domElement.style.position = 'absolute';
   labelRenderer.domElement.style.top = '0px';
   labelRenderer.domElement.style.pointerEvents = 'none';
-  document.body.appendChild(labelRenderer.domElement);
- 
-  
+
   // Model
   let model: THREE.Object3D;
   let mixer: THREE.AnimationMixer;
@@ -82,84 +79,71 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     // 애니메이션 데이터를 로드합니다.
     const clips = gltf.animations;
 
-
     if (clips.length) {
       // 애니메이션 클립을 Mixer에 추가합니다.
       mixer.clipAction(clips[0]).play();
     }
   });
 
-
-
   // 아이콘 넣기
   icons.forEach(icon => {
 
-    const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load(icon.image_url);
+    // 아이콘 그리기
+    let textureLoader = new THREE.TextureLoader();
+    let texture = textureLoader.load(icon.image_url);
 
-    let circleGeom = new THREE.CircleGeometry(icon.radius, 32);
+    let circleGeom = new THREE.CircleGeometry(icon.icon_radius, 15);
     circleGeom.translate(icon.x, icon.y, icon.z);
     let circleMat = new THREE.MeshBasicMaterial({
         map: texture,
     });
-    let circleMesh = new THREE.Mesh(circleGeom, circleMat);
-    circleMesh.updateMatrixWorld(false);
 
+    let circleMesh = new THREE.Mesh(circleGeom, circleMat);
+    
     // 링크주소 설정
     circleMesh.userData = {URL: icon.link_url};
     scene.add(circleMesh);
+
+
+     //label 그리기
+    let p = document.createElement('p');
+    p.textContent = icon.label;
+    let pContainer = document.createElement('div');
+    pContainer.appendChild(p);
+  
+    p.style.fontSize= icon.text_size + 'px';
+    p.style.textAlign = 'left';
+    p.style.paddingLeft = '0.5px';
+    p.style.paddingRight = '0.5px';
+    p.style.paddingTop = '0.3px';
+    p.style.paddingBottom = '0.7px';
+    p.style.color = '#' + icon.text_color;
+
+    p.style.marginLeft = '0px';
+    
+    // p.style.background = '#ff0000';   
+    // p.style.opacity = '0.9'; 
+   
+    let labelObject = new CSS3DObject(p);
+    labelObject.position.set(icon.x, icon.y-0.6, icon.z);
+
+
+    // text 코드
+    // let test_geom = new THREE.SphereGeometry(0.2, 10, 10);
+    // let test_mat = new THREE.MeshBasicMaterial({
+    //   color: 0x87ceeb,
+    // });
+
+    // let test_mesh = new THREE.Mesh(test_geom, test_mat);
+    // test_mesh.position.set(icon.x, icon.y, icon.z);
+    
+    // scene.add(test_mesh);
+
+
+    scene.add(labelObject);
+  
   });
 
-  //  텍스트 넣기
-  // const floader = new FontLoader();
-  // floader.load('public/NanumGothic_Regular.json', function(font){
-  //   const message = '   Three.js\nSimple text.';  
-  // 	const shapes = font.generateShapes( message, 100 );
-	// 	const geometry = new THREE.ShapeGeometry( shapes );
-
-  // });
-
-
-
-  //label 그리기
-  const p = document.createElement('p');
-  p.className = 'tooltip';
-  p.textContent = '공업탑 로터리';
-  p.style.fontSize='0.8px';
-  p.style.color='white'
-  const pContainer = document.createElement('div');
-  pContainer.appendChild(p);
-  const cPointLabel = new CSS3DObject(pContainer);
-  cPointLabel.position.set(4, 2 , 3);
-  scene.add(cPointLabel);
-
-  // 테스트 텍스트 그리기
-  /*
-  let fontLoader = new FontLoader();
-  fontLoader.load("Do Hyeon_Regular.json", (font) => {
-    let geometry = new TextGeometry(
-        "GIS Devloper, 김형준",
-        { 
-            font: font,
-            size: 1,
-            height: 0,
-            curveSegments: 12
-        }
-    );
-      
-    geometry.translate( 0, 0, 0);
-    geometry.scale(10, 10, 10);
-
-    let material = new THREE.MeshBasicMaterial({
-        color: 0xffffff, 
-        wireframe: true
-    });
-
-    let text = new THREE.Mesh(geometry, material);
-    text.position.z = -150;
-    scene.add(text);
-  });
-  */
 
   // 그리기
   const clock = new THREE.Clock();
@@ -211,16 +195,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
         console.log('intersected!!');
         console.log(intersects[0].object.userData.URL);
         window.open(intersects[0].object.userData.URL, '_blank');
-
-        // if ( INTERSECTED != intersects[ 0 ].object ) {
-
-        //   if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
-        //   INTERSECTED = intersects[ 0 ].object;
-        //   INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-        //   INTERSECTED.material.emissive.setHex( 0xff0000 );
-
-        // }
 
       } else {
 
