@@ -222,8 +222,10 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
     }        
   }
-  window.addEventListener( 'mouseup', onMouseUp );
+   window.addEventListener( 'mouseup', onMouseUp );
 
+
+   
   // 마우스 오버
   function onMouseOver(event) {
     pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
