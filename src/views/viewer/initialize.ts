@@ -92,7 +92,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     let textureLoader = new THREE.TextureLoader();
     let texture = textureLoader.load(icon.image_url);
 
-    let circleGeom = new THREE.CircleGeometry(icon.icon_radius, 15);
+    let circleGeom = new THREE.CircleGeometry(icon.icon_radius, 30);
     circleGeom.translate(icon.x, icon.y, icon.z);
     let circleMat = new THREE.MeshBasicMaterial({
         map: texture,
@@ -100,10 +100,11 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
     let circleMesh = new THREE.Mesh(circleGeom, circleMat);
     
-    // 링크주소 설정
-    circleMesh.userData = {URL: icon.link_url};
-    scene.add(circleMesh);
+    
+    // 아이콘 속성 설정
+    circleMesh.userData = {URL: icon.link_url, TYPE: 'icon'};
 
+    scene.add(circleMesh);
 
      //label 그리기
     let p = document.createElement('p');
@@ -140,8 +141,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     // scene.add(test_mesh);
 
 
-    scene.add(labelObject);
-  
+    scene.add(labelObject);  
   });
 
 
@@ -156,11 +156,20 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
       mixer.update(0.002);
     }
 
-  
+     // 아이콘과 라벨을 카메라 방향으로 보기
+     scene.traverse( function( object ) {
+      if ( object.userData.TYPE == 'icon') {
+        object.lookAt(camera.position);
+      }
+    });
+
     controls.update();
 
     labelRenderer.render(scene, camera);
     renderer.render(scene, camera);
+
+    // 
+
 
     renderer.setAnimationLoop(draw);
   }
@@ -189,26 +198,48 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
   	// find intersections
 		raycaster.setFromCamera( pointer, camera );
-    const intersects = raycaster.intersectObjects( scene.children, false );
+    const intersects = raycaster.intersectObjects(scene.children, true );
 
-      if ( intersects.length > 0 ) {
-        console.log('intersected!!');
-        console.log(intersects[0].object.userData.URL);
-        window.open(intersects[0].object.userData.URL, '_blank');
 
+    if ( intersects.length > 0 ) {
+      if(intersects[0].object.userData.TYPE == 'icon') {
+        window.open(intersects[0].object.userData.URL, '_blank'); 
       } else {
-
-        // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
-        // INTERSECTED = null;
-
+        console.log('hitted glb model!');
+        console.log(intersects[0].point);
       }
 
-        
+    } else {
 
-    console.log('clicked');
+      // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+      // INTERSECTED = null;
+
+    }        
   }
   window.addEventListener( 'mouseup', onMouseUp );
+
+  // 마우스 오버
+  function onMouseOver(event) {
+    pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+  	// find intersections
+		raycaster.setFromCamera( pointer, camera );
+    const intersects = raycaster.intersectObjects( scene.children, false );
+
+    if ( intersects.length > 0 ) {
+      if(intersects[0].object.userData.TYPE == 'icon') {
+        // intersects[0].object.scale.set(2.0, 2.0, 2.0);        
+      } else {
+        
+      }
+    } else {
+
+
+    }
+  }
+  window.addEventListener( 'mouseover', onMouseOver );
 
 
 }
