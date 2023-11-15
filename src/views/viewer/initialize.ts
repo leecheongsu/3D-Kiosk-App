@@ -93,17 +93,16 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     let texture = textureLoader.load(icon.image_url);
 
     let circleGeom = new THREE.CircleGeometry(icon.icon_radius, 30);
-    circleGeom.translate(icon.x, icon.y, icon.z);
+    // circleGeom.translate(icon.x, icon.y, icon.z);
     let circleMat = new THREE.MeshBasicMaterial({
         map: texture,
     });
 
     let circleMesh = new THREE.Mesh(circleGeom, circleMat);
-    
-    
+    circleMesh.position.set(icon.x, icon.y, icon.z);
+        
     // 아이콘 속성 설정
     circleMesh.userData = {URL: icon.link_url, TYPE: 'icon'};
-
     scene.add(circleMesh);
 
      //label 그리기
@@ -113,20 +112,25 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     pContainer.appendChild(p);
   
     p.style.fontSize= icon.text_size + 'px';
-    p.style.textAlign = 'left';
-    p.style.paddingLeft = '0.5px';
-    p.style.paddingRight = '0.5px';
-    p.style.paddingTop = '0.3px';
-    p.style.paddingBottom = '0.7px';
     p.style.color = '#' + icon.text_color;
 
-    p.style.marginLeft = '0px';
+    // p.style.textAlign = 'left';
+    // p.style.paddingLeft = '0.5px';
+    // p.style.paddingRight = '0.5px';
+    // p.style.paddingTop = '0.3px';
+    // p.style.paddingBottom = '0.7px';
+    
+
+    // p.style.marginLeft = '0px';
     
     // p.style.background = '#ff0000';   
     // p.style.opacity = '0.9'; 
    
     let labelObject = new CSS3DObject(p);
-    labelObject.position.set(icon.x, icon.y-0.6, icon.z);
+
+    // 라벨 속성 설정
+    labelObject.userData = {URL: icon.link_url, TYPE: 'icon_label'};
+    labelObject.position.set(icon.x, icon.y, icon.z);
 
 
     // text 코드
@@ -158,7 +162,8 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
      // 아이콘과 라벨을 카메라 방향으로 보기
      scene.traverse( function( object ) {
-      if ( object.userData.TYPE == 'icon') {
+     
+     if ( object.userData.TYPE == 'icon' || object.userData.TYPE == 'icon_label') {
         object.lookAt(camera.position);
       }
     });
