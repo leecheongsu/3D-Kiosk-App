@@ -12,6 +12,7 @@ const Main = styled.div`
 `;
 type Props = {};
 
+
 function NotFound({}: Props) {
   const navigator = useNavigate();
   const [number, setNumber] = useState(3);
