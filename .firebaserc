@@ -1,19 +1,11 @@
 {
   "projects": {
-    "default": "onna-b7783",
-    "onna": "onna-b7783"
+    "default": "onna-intro"
   },
   "targets": {
-    "onna": {
+    "onna-intro": {
       "hosting": {
-        "viewer": [
-          "onna-viewer"
-        ]
-      }
-    },
-    "onna-b7783": {
-      "hosting": {
-        "viewer": [
+        "intro": [
           "/build"
         ]
       }
