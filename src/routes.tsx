@@ -1,7 +1,6 @@
 import React, { Suspense, lazy, Fragment, LazyExoticComponent, ExoticComponent, ReactNode } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import MainLayout from './layouts/Main';
-import ManageLayout from './layouts/Manage';
 
 type Routes = {
   path: string;

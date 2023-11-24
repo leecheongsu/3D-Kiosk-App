@@ -1,12 +1,8 @@
-import { secureHeapUsed } from 'crypto';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
-
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 
 export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, icons: any) {
   // Canvas
@@ -31,23 +27,29 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   camera.position.y = 20;
   camera.position.z = 40;
 
-
   // RayCaster
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
 
+  //Distance, Vector3
+  const plane = new THREE.Plane();
+  const planeNormal = new THREE.Vector3();
+
   // Lights
+  // 전역으로 빛 방출
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
 
+  // 특정방향으로 빛 방출
   const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
   directionalLight.position.set(100, 200, 100);
   scene.add(directionalLight);
 
-   // Controls
+  // Controls
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
-  controls.enablePan = true;
+  // default값이 true
+  // controls.enablePan = true;
   controls.minDistance = 20;
   controls.maxDistance = 150;
   controls.minPolarAngle = Math.PI / 4; // 위 아래 회전 각도의 최소값 (0은 수평)
@@ -56,7 +58,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   controls.maxAzimuthAngle = Math.PI / 5; // 좌우 회전 각도의 최대값 (Math.PI / 5는 오른쪽으로 45도)
   controls.update();
 
- 
   // CSS2DRenderer
   const labelRenderer = new CSS3DRenderer();
   labelRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -86,68 +87,27 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   });
 
   // 아이콘 넣기
-  icons.forEach(icon => {
+  icons.forEach((icon) => {
+    const { x, y, z } = icon.position;
 
     // 아이콘 그리기
     let textureLoader = new THREE.TextureLoader();
-    let texture = textureLoader.load(icon.image_url);
+    let texture = textureLoader.load(icon.imageUrl);
 
-    let circleGeom = new THREE.CircleGeometry(icon.icon_radius, 30);
-    // circleGeom.translate(icon.x, icon.y, icon.z);
+    let circleGeom = new THREE.CircleGeometry(icon.radius, 30);
+
     let circleMat = new THREE.MeshBasicMaterial({
-        map: texture,
+      map: texture,
     });
 
     let circleMesh = new THREE.Mesh(circleGeom, circleMat);
-    circleMesh.position.set(icon.x, icon.y, icon.z);
-        
+    circleMesh.position.set(x, y, z);
+    // circleMesh.material.
+
     // 아이콘 속성 설정
-    circleMesh.userData = {URL: icon.link_url, TYPE: 'icon'};
+    circleMesh.userData = { URL: icon.linkUrl, TYPE: 'icon' };
     scene.add(circleMesh);
-
-     //label 그리기
-    let p = document.createElement('p');
-    p.textContent = icon.label;
-    let pContainer = document.createElement('div');
-    pContainer.appendChild(p);
-  
-    p.style.fontSize= icon.text_size + 'px';
-    p.style.color = '#' + icon.text_color;
-
-    // p.style.textAlign = 'left';
-    // p.style.paddingLeft = '0.5px';
-    // p.style.paddingRight = '0.5px';
-    // p.style.paddingTop = '0.3px';
-    // p.style.paddingBottom = '0.7px';
-    
-
-    // p.style.marginLeft = '0px';
-    
-    // p.style.background = '#ff0000';   
-    // p.style.opacity = '0.9'; 
-   
-    let labelObject = new CSS3DObject(p);
-
-    // 라벨 속성 설정
-    labelObject.userData = {URL: icon.link_url, TYPE: 'icon_label'};
-    labelObject.position.set(icon.x, icon.y, icon.z);
-
-
-    // text 코드
-    // let test_geom = new THREE.SphereGeometry(0.2, 10, 10);
-    // let test_mat = new THREE.MeshBasicMaterial({
-    //   color: 0x87ceeb,
-    // });
-
-    // let test_mesh = new THREE.Mesh(test_geom, test_mat);
-    // test_mesh.position.set(icon.x, icon.y, icon.z);
-    
-    // scene.add(test_mesh);
-
-
-    scene.add(labelObject);  
   });
-
 
   // 그리기
   const clock = new THREE.Clock();
@@ -160,10 +120,9 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
       mixer.update(0.002);
     }
 
-     // 아이콘과 라벨을 카메라 방향으로 보기
-     scene.traverse( function( object ) {
-     
-     if ( object.userData.TYPE == 'icon' || object.userData.TYPE == 'icon_label') {
+    // 아이콘과 라벨을 카메라 방향으로 보기
+    scene.traverse(function (object) {
+      if (object.userData.TYPE == 'icon' || object.userData.TYPE == 'icon_label') {
         object.lookAt(camera.position);
       }
     });
@@ -172,9 +131,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
     labelRenderer.render(scene, camera);
     renderer.render(scene, camera);
-
-    // 
-
 
     renderer.setAnimationLoop(draw);
   }
@@ -194,59 +150,74 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     camera.aspect = newWidth / newHeight;
     camera.updateProjectionMatrix();
   }
-  window.addEventListener('resize', resizeCanvas);
 
-  // 화면 클릭
-  function onMouseUp(event) {
-    pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-		pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  /*
+   *   추후 중복코드 리팩토링 진행할 것.
+   *   아이콘 위치들을 값으로 체크해서 find intersection 할 필요 없이 코드 수정할 것.
+   * */
 
-  	// find intersections
-		raycaster.setFromCamera( pointer, camera );
-    const intersects = raycaster.intersectObjects(scene.children, true );
+  //아이콘 클릭
+  const mouseUpListener = (e: MouseEvent) => {
+    pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
+    // find intersections
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
 
-    if ( intersects.length > 0 ) {
-      if(intersects[0].object.userData.TYPE == 'icon') {
-        window.open(intersects[0].object.userData.URL, '_blank'); 
+    if (intersects.length !== 0) {
+      if (intersects[0].object.userData.TYPE == 'icon') {
+        window.open(intersects[0].object.userData.URL, '_blank');
       } else {
-        console.log('hitted glb model!');
-        console.log(intersects[0].point);
       }
-
     } else {
+    }
+  };
 
-      // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+  //없어질 것
+  window.addEventListener('click', function (e) {
+    pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
-      // INTERSECTED = null;
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(scene.children, false);
+    // printLogObj(intersects)
+  });
 
-    }        
-  }
-   window.addEventListener( 'mouseup', onMouseUp );
-
-
-   
-  // 마우스 오버
   function onMouseOver(event) {
-    pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-		pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  	// find intersections
-		raycaster.setFromCamera( pointer, camera );
-    const intersects = raycaster.intersectObjects( scene.children, false );
+    // find intersections
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(scene.children, false);
 
-    if ( intersects.length > 0 ) {
-      if(intersects[0].object.userData.TYPE == 'icon') {
-        // intersects[0].object.scale.set(2.0, 2.0, 2.0);        
+    if (intersects.length > 0) {
+      if (intersects[0].object.userData.TYPE == 'icon') {
+        // intersects[0].object.scale.set(2.0, 2.0, 2.0);
       } else {
-        
       }
     } else {
-
-
     }
   }
-  window.addEventListener( 'mouseover', onMouseOver );
 
+  //마우스 포인트 로케이션 -> 아이콘 위치조정
+  // const clickListener = (e: MouseEvent) => {
+  //   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+  //   pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  //
+  //   planeNormal.copy(camera.position).normalize();
+  //   plane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(plane.normal), scene.position);
+  //
+  //   raycaster.setFromCamera(pointer, camera);
+  //   const data = new Vector3();
+  //   raycaster.ray.intersectPlane(plane, data);
+  //
+  //   printLogObj(data);
+  // };
 
+  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('mouseup', mouseUpListener);
+  // window.addEventListener('mouseover', onmouseover);
+  // window.addEventListener('click', clickListener);
 }

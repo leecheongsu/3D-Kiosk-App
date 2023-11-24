@@ -4,9 +4,9 @@ import { AppRouter } from './routes';
 import { initializeI18next } from './plugins/i18next';
 import { Provider } from 'react-redux';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-import { theme } from './styles/theme';
+import { theme } from "@styles/theme";
 import store from './store';
-// import { firestore } from "@lib/firebase";
+
 function App() {
   useEffect(() => {
     initializeI18next();
