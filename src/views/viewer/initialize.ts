@@ -138,6 +138,9 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   draw();
 
   // 화면 리사이즈
+  /**
+   *  NOTICE.  -> 카테고리에 따라 Camera 위치 조정해야할 듯
+   */
   function resizeCanvas() {
     const newWidth = window.innerWidth;
     const newHeight = window.innerHeight;
@@ -150,11 +153,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     camera.aspect = newWidth / newHeight;
     camera.updateProjectionMatrix();
   }
-
-  /*
-   *   추후 중복코드 리팩토링 진행할 것.
-   *   아이콘 위치들을 값으로 체크해서 find intersection 할 필요 없이 코드 수정할 것.
-   * */
 
   //아이콘 클릭
   const mouseUpListener = (e: MouseEvent) => {
@@ -174,16 +172,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     }
   };
 
-  //없어질 것
-  window.addEventListener('click', function (e) {
-    pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(pointer, camera);
-    const intersects = raycaster.intersectObjects(scene.children, false);
-    // printLogObj(intersects)
-  });
-
   function onMouseOver(event) {
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -201,7 +189,9 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     }
   }
 
-  //마우스 포인트 로케이션 -> 아이콘 위치조정
+  /**
+   * NOTICE 3D구조상 마우스 포인터 좌표
+   */
   // const clickListener = (e: MouseEvent) => {
   //   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
   //   pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -219,5 +209,4 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   window.addEventListener('resize', resizeCanvas);
   window.addEventListener('mouseup', mouseUpListener);
   // window.addEventListener('mouseover', onmouseover);
-  // window.addEventListener('click', clickListener);
 }

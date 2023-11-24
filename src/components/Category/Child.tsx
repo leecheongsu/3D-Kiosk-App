@@ -54,7 +54,7 @@ function CategoryChild({ value }) {
     const sorted = [...value].sort((a, b) => a.order - b.order);
     setChildren(sorted);
 
-    printLogObj(sorted)
+    // printLogObj(sorted)
 
   }, []);
 
