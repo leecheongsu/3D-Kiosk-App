@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { ACTION } from '@src/types/category';
 import Modal from '@components/Modal';
-import { printLogObj } from "@utils/printLog";
+import { printLogObj } from '@utils/printLog';
+import { Link } from 'react-router-dom';
 
 const Child = styled(AccordionDetails)`
   transform: scale(1);
@@ -30,32 +31,20 @@ function CategoryChild({ value }) {
   const open = Boolean(anchorEl);
   const [children, setChildren] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  //Modal 위치
-  const [isLeftAlign, setIsLeftAlign] = useState(false)
 
   const handleClick = (e, child) => {
     setAnchorEl(e.currentTarget);
-    setIsModalOpen(true);
-    switch (child.type) {
-      case ACTION.NEW_WINDOW_LINK:
-        {
-        }
-        break;
-      case ACTION.SIDE_MODAL:
-        {
-        }
-        break;
-      default: //추후 개발 예정
-    }
-    console.log(child.linkUrl);
-  };
 
+    /**
+     *  모달이 있는지만 체크 할 것.
+     */
+    if (child.Type === ACTION.MODAL) {
+      setIsModalOpen(true);
+    }
+  };
   useEffect(() => {
     const sorted = [...value].sort((a, b) => a.order - b.order);
     setChildren(sorted);
-
-    // printLogObj(sorted)
-
   }, []);
 
   return (
@@ -75,17 +64,19 @@ function CategoryChild({ value }) {
           {v.title}
         </Button>
       ))}
-      <Modal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Your Modal Title"
-        content={<p>This is your modal content.</p>}
-        actions={
-          <Button onClick={() => setIsModalOpen(false)} color="primary">
-            Close
-          </Button>
-        }
-      />
+      {isModalOpen && (
+        <Modal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Your Modal Title"
+          content={<p>This is your modal content.</p>}
+          actions={
+            <Button onClick={() => setIsModalOpen(false)} color="primary">
+              Close
+            </Button>
+          }
+        />
+      )}
     </Child>
   );
 }

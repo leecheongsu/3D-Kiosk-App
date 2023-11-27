@@ -1,9 +1,15 @@
 export enum ACTION {
   NONE = "none",
+  // IFRAME = "iframe",
   NEW_WINDOW_LINK = "newWindowLink",
   CUR_WINDOW_LINK = "currentWindowLink",
   SIDE_MODAL = "sideModal",
-  // IFRAME = "iframe",
+  /**
+   * AsIs) 복제사용
+   * ToBe) 아이콘 타입별로 분리해야됨. 추후 리팩토링 할 것.
+   */
+  MODAL = "modal",
+  LINK = "link",
 }
 
 export type Icons = {

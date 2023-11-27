@@ -105,7 +105,8 @@ function index({}: Props) {
               }}
               id="canvas"
             />
-          </div>x
+          </div>
+          x
         </>
       )}
     </div>

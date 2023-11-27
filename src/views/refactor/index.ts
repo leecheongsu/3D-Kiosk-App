@@ -1,7 +1,3 @@
-
-
-
-
 // Constants
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import THREE from "three";
@@ -11,7 +7,7 @@ const AMBIENT_LIGHT_COLOR = 0xffffff;
 const DIRECTIONAL_LIGHT_COLOR = 0xffffff;
 
 function setupRenderer(canvas) {
-  // ... (previous renderer setup logic)
+  // ... 렌더러
 }
 
 function setupCamera() {
