@@ -3,14 +3,14 @@ import styled from '@emotion/styled';
 import CategoryIconButton from '@components/Button/CategoryIcon';
 import CategoryParent from '@components/Category/Parent';
 
-const Index = styled.div`
+const Container = styled.div`
   position: absolute;
   top: 30%;
   z-index: 1000;
   font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
-  color: #72aeff;
+  color: #094fad;
   padding: 0;
   //-webkit-animation: forwards 3s; /* Safari and Chrome */
 `;
@@ -67,12 +67,12 @@ function CategoryContainer({ value }) {
   return (
     <>
       {isShow && (
-        <Index
+        <Container
           ref={categoryBoxRef}
           style={{ left: isLeftAlign ? '43px' : 'auto', right: isLeftAlign ? 'auto' : '43px' }}
         >
           <CategoryParent parent={parent} children={children} />
-        </Index>
+        </Container>
       )}
       {!isShow && (
         <CategoryIconButton

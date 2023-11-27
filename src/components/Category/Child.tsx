@@ -15,16 +15,21 @@ const Child = styled(AccordionDetails)`
   color: #fff;
   line-height: normal;
   text-transform: none;
+  border-top: solid 1px white;
 `;
 
 const BtnStyle = {
-  color: '#fff',
   fontSize: '16px',
   fontWeight: 500,
   width: '100%',
   marginBottom: '8px',
   justifyContent: 'left',
+  transition: 'background-color 0.3s ease',
+  backgroundColor: '#094fad',
+  padding: '10px',
+  color: '#fff'
 } as const;
+
 
 function CategoryChild({ value }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

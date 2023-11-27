@@ -2,13 +2,17 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
-
 export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, icons: any) {
   // Canvas
   if (!canvas) {
     throw new Error('No canvas found');
   }
+
+  const scene = new THREE.Scene();
+
+  // Set up gradient background colors
+  const color1 = new THREE.Color( 0x007aff);
+  const color2 = new THREE.Color(0x0303E1);
 
   // Renderer
   const renderer = new THREE.WebGLRenderer({
@@ -18,10 +22,20 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
 
-  // 배경 색상
-  renderer.setClearColor(0x49c6e5);
+  const gradientCanvas = document.createElement('canvas');
+  gradientCanvas.width = 256;
+  gradientCanvas.height = 256;
 
-  const scene = new THREE.Scene();
+  const gradientContext = gradientCanvas.getContext('2d');
+  const gradient = gradientContext.createLinearGradient(0, 0, 0, gradientCanvas.height);
+  gradient.addColorStop(0, color1.getStyle());
+  gradient.addColorStop(1, color2.getStyle());
+
+  gradientContext.fillStyle = gradient;
+  gradientContext.fillRect(0, 0, gradientCanvas.width, gradientCanvas.height);
+
+  const gradientTexture = new THREE.CanvasTexture(gradientCanvas);
+  scene.background = gradientTexture;
 
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.y = 20;
@@ -58,14 +72,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   controls.maxAzimuthAngle = Math.PI / 5; // 좌우 회전 각도의 최대값 (Math.PI / 5는 오른쪽으로 45도)
   controls.update();
 
-  // CSS2DRenderer
-  const labelRenderer = new CSS3DRenderer();
-  labelRenderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(labelRenderer.domElement);
-  labelRenderer.domElement.style.position = 'absolute';
-  labelRenderer.domElement.style.top = '0px';
-  labelRenderer.domElement.style.pointerEvents = 'none';
-
   // Model
   let model: THREE.Object3D;
   let mixer: THREE.AnimationMixer;
@@ -98,14 +104,15 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
     let circleMat = new THREE.MeshBasicMaterial({
       map: texture,
+      transparent: true,
     });
 
     let circleMesh = new THREE.Mesh(circleGeom, circleMat);
     circleMesh.position.set(x, y, z);
-    // circleMesh.material.
 
     // 아이콘 속성 설정
-    circleMesh.userData = { URL: icon.linkUrl, TYPE: 'icon' };
+    circleMesh.userData = { URL: icon.linkUrl, TYPE: 'icon', isHovered: false };
+
     scene.add(circleMesh);
   });
 
@@ -113,7 +120,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   const clock = new THREE.Clock();
 
   function draw() {
-    const delta = clock.getDelta();
+    clock.getDelta();
 
     // Mixer 업데이트
     if (model) {
@@ -122,20 +129,17 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
     // 아이콘과 라벨을 카메라 방향으로 보기
     scene.traverse(function (object) {
-      if (object.userData.TYPE == 'icon' || object.userData.TYPE == 'icon_label') {
+      if (object.userData.TYPE == 'icon') {
         object.lookAt(camera.position);
       }
     });
 
     controls.update();
-
-    labelRenderer.render(scene, camera);
     renderer.render(scene, camera);
-
     renderer.setAnimationLoop(draw);
   }
-
   draw();
+
 
   // 화면 리사이즈
   /**
@@ -146,7 +150,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     const newHeight = window.innerHeight;
 
     // 렌더러 크기 조정
-    labelRenderer.setSize(newWidth, newHeight);
     renderer.setSize(newWidth, newHeight);
 
     // 카메라 비율 조정
@@ -172,25 +175,8 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     }
   };
 
-  function onMouseOver(event) {
-    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // find intersections
-    raycaster.setFromCamera(pointer, camera);
-    const intersects = raycaster.intersectObjects(scene.children, false);
-
-    if (intersects.length > 0) {
-      if (intersects[0].object.userData.TYPE == 'icon') {
-        // intersects[0].object.scale.set(2.0, 2.0, 2.0);
-      } else {
-      }
-    } else {
-    }
-  }
-
   /**
-   * NOTICE 3D구조상 마우스 포인터 좌표
+   * NOTICE. 3D 마우스 포인터 좌표값
    */
   // const clickListener = (e: MouseEvent) => {
   //   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -205,8 +191,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   //
   //   printLogObj(data);
   // };
-
   window.addEventListener('resize', resizeCanvas);
-  window.addEventListener('mouseup', mouseUpListener);
-  // window.addEventListener('mouseover', onmouseover);
+  window.addEventListener('mouseup', mouseUpListener)
 }

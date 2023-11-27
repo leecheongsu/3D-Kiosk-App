@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 const Parent = styled(Accordion)`
   width: 250px;
-  background: #007aff;
+  background: #094fad;
   transition: all 0.2s;
   position: relative;
   padding: 0;
@@ -21,13 +21,17 @@ const Parent = styled(Accordion)`
 const Contents = styled(AccordionSummary)`
   opacity: 1;
   color: #fff;
+
+  &:hover {
+    background-color: #0563ce; // Add your desired hover background color
+  }
 `;
 
 const BtnStyle = {
   color: '#fff',
   width: '100%',
   fontSize: '16px',
-  fontWeight: 500,
+  fontWeight: 600,
   marginLeft: '7px',
   justifyContent: 'left',
 } as const;
@@ -44,7 +48,7 @@ function CategoryParent({ parent, children }) {
         <Parent key={v.id} expanded={expanded === v.id} onChange={handleChange(v.id)}>
           {v.hasChild && (
             <Contents expandIcon={<ExpandMoreIcon sx={{ color: '#fff' }} />}>
-              <Typography sx={{ color: '#fff' }}>{v.title}</Typography>
+              <Typography sx={{ color: '#fff', fontWeight: 700 }}>{v.title}</Typography>
             </Contents>
           )}
           {!v.hasChild && (
