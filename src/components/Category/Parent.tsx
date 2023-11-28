@@ -30,7 +30,6 @@ const Contents = styled(AccordionSummary)`
 
 const BtnStyle = {
   color: '#fff',
-  width: '100%',
   fontSize: '16px',
   fontWeight: 600,
   marginLeft: '7px',

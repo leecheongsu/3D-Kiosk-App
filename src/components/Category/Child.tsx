@@ -11,6 +11,7 @@ const Child = styled(AccordionDetails)`
   transform: scale(1);
   opacity: 1;
   height: auto;
+  width: 250px;
   padding: 0 9px 8px 9px;
   color: #fff;
   line-height: normal;
@@ -21,7 +22,7 @@ const Child = styled(AccordionDetails)`
 const BtnStyle = {
   fontSize: '16px',
   fontWeight: 500,
-  width: '100%',
+  width: '250px',
   marginBottom: '8px',
   justifyContent: 'left',
   transition: 'background-color 0.3s ease',
@@ -30,7 +31,6 @@ const BtnStyle = {
   "&:hover": {
     background: "#799ccb"
   },
-
 } as const;
 
 
