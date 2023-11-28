@@ -22,32 +22,33 @@ const Child = styled(AccordionDetails)`
 const BtnStyle = {
   fontSize: '16px',
   fontWeight: 500,
-  width: '250px',
+  width: '100%',
   marginBottom: '8px',
   justifyContent: 'left',
   transition: 'background-color 0.3s ease',
   padding: '10px',
   color: '#fff',
-  "&:hover": {
-    background: "#799ccb"
+  '&:hover': {
+    background: '#799ccb',
   },
 } as const;
-
 
 function CategoryChild({ value }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [children, setChildren] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalValue, setModalValue] = useState({})
 
-  const handleClick = (e, child) => {
+  const handleClick = (e, v) => {
     setAnchorEl(e.currentTarget);
 
     /**
      *  모달이 있는지만 체크 할 것.
      */
-    if (child.Type === ACTION.MODAL) {
+    if (v.type === ACTION.SIDE_MODAL) {
       setIsModalOpen(true);
+      setModalValue(v)
     }
   };
   useEffect(() => {
@@ -76,8 +77,7 @@ function CategoryChild({ value }) {
         <Modal
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          title="Your Modal Title"
-          content={<p>This is your modal content.</p>}
+          value={modalValue}
           actions={
             <Button onClick={() => setIsModalOpen(false)} color="primary">
               Close

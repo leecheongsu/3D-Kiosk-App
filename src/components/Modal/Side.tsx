@@ -31,7 +31,7 @@ const useStyles = makeStyles({
   },
   dialogHeader: {},
   dialogContent: {},
-  dialogButton: {}
+  dialogButton: {},
 });
 
 const StyledDialogContent = styled(DialogContent)`

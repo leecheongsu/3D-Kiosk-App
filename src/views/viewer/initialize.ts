@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { printLogObj } from "@utils/printLog";
+import { Vector3 } from "three";
+import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, icons: any) {
   // Canvas
@@ -18,8 +21,8 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
 
-  const color1 = new THREE.Color( 0x007aff);
-  const color2 = new THREE.Color(0x0303E1);
+  const color1 = new THREE.Color(0x007aff);
+  const color2 = new THREE.Color(0x0303e1);
 
   const gradientCanvas = document.createElement('canvas');
   gradientCanvas.width = 256;
@@ -137,8 +140,8 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     renderer.render(scene, camera);
     renderer.setAnimationLoop(draw);
   }
-  draw();
 
+  draw();
 
   // 화면 리사이즈
   /**
@@ -174,22 +177,10 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     }
   };
 
-  /**
-   * NOTICE. 3D 마우스 포인터 좌표값
-   */
-  // const clickListener = (e: MouseEvent) => {
-  //   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-  //   pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
-  //
-  //   planeNormal.copy(camera.position).normalize();
-  //   plane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(plane.normal), scene.position);
-  //
-  //   raycaster.setFromCamera(pointer, camera);
-  //   const data = new Vector3();
-  //   raycaster.ray.intersectPlane(plane, data);
-  //
-  //   printLogObj(data);
-  // };
+
   window.addEventListener('resize', resizeCanvas);
-  window.addEventListener('mouseup', mouseUpListener)
+  window.addEventListener('mouseup', mouseUpListener);
+  // window.addEventListener('mousemove', (e) => {
+  //   console.log(1)
+  // });
 }
