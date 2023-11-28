@@ -25,9 +25,12 @@ const BtnStyle = {
   marginBottom: '8px',
   justifyContent: 'left',
   transition: 'background-color 0.3s ease',
-  backgroundColor: '#094fad',
   padding: '10px',
-  color: '#fff'
+  color: '#fff',
+  "&:hover": {
+    background: "#799ccb"
+  },
+
 } as const;
 
 

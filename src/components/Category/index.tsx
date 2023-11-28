@@ -10,7 +10,6 @@ const Container = styled.div`
   font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
-  color: #094fad;
   padding: 0;
   //-webkit-animation: forwards 3s; /* Safari and Chrome */
 `;

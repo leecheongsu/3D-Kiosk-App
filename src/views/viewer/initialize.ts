@@ -10,10 +10,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
   const scene = new THREE.Scene();
 
-  // Set up gradient background colors
-  const color1 = new THREE.Color( 0x007aff);
-  const color2 = new THREE.Color(0x0303E1);
-
   // Renderer
   const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -21,6 +17,9 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
+
+  const color1 = new THREE.Color( 0x007aff);
+  const color2 = new THREE.Color(0x0303E1);
 
   const gradientCanvas = document.createElement('canvas');
   gradientCanvas.width = 256;

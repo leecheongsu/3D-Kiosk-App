@@ -10,20 +10,21 @@ import { Link } from 'react-router-dom';
 
 const Parent = styled(Accordion)`
   width: 250px;
-  background: #094fad;
   transition: all 0.2s;
   position: relative;
   padding: 0;
   vertical-align: baseline;
   margin-bottom: 16px;
+  background-color: #094fad;
 `;
 
 const Contents = styled(AccordionSummary)`
   opacity: 1;
   color: #fff;
+  background-color: #094fad;
 
   &:hover {
-    background-color: #0563ce; // Add your desired hover background color
+    background-color: #799ccb;
   }
 `;
 
@@ -34,6 +35,7 @@ const BtnStyle = {
   fontWeight: 600,
   marginLeft: '7px',
   justifyContent: 'left',
+  backgroundColor: '#094fad',
 } as const;
 
 function CategoryParent({ parent, children }) {
