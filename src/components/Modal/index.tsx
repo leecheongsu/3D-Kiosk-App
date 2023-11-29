@@ -11,7 +11,7 @@ function Modal({ open, onClose, value, actions }) {
   return (
   <>
     { value.type === ACTION.SIDE_MODAL && (
-      <Side open={open} onClose={onClose} title={value.title} content="walbiwalbiwalbi" actions={actions} />
+      <Side open={open} onClose={onClose} value={value} actions={actions} />
     )}
   </>
   );

@@ -12,7 +12,7 @@ const Child = styled(AccordionDetails)`
   opacity: 1;
   height: auto;
   width: 250px;
-  padding: 0 9px 8px 9px;
+  padding: 8px 9px 8px 9px;
   color: #fff;
   line-height: normal;
   text-transform: none;
@@ -79,7 +79,7 @@ function CategoryChild({ value }) {
           onClose={() => setIsModalOpen(false)}
           value={modalValue}
           actions={
-            <Button onClick={() => setIsModalOpen(false)} color="primary">
+            <Button onClick={() => setIsModalOpen(false)} color="primary" >
               Close
             </Button>
           }
