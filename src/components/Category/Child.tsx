@@ -42,7 +42,6 @@ function CategoryChild({ value }) {
 
   const handleClick = (e, v) => {
     setAnchorEl(e.currentTarget);
-
     /**
      *  모달이 있는지만 체크 할 것.
      */

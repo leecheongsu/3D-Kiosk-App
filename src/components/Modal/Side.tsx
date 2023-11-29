@@ -2,31 +2,29 @@ import React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { makeStyles } from '@mui/styles';
-import { theme } from '@styles/theme';
 import { IconButton } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
 import styled from '@emotion/styled';
+import { theme } from '@styles/theme';
 
 const Container = styled(Dialog)`
-  height: '100vh';
-  min-width: '500px';
-  max-width: '20vw';
-  padding: '55px 45px 30px 45px';
-  position: 'fixed';
-  right: 0;
-  top: 0;
-  box-shadow: 'none';
-  transition: 'ease-in';
-  background-color: '#fff';
   .MuiBackdrop-root {
     background-color: transparent;
   }
 `;
 
-
-
-
 const useStyles = makeStyles({
+  container: {
+    height: '100vh',
+    minWidth: '500px',
+    maxWidth: '20vw',
+    position: 'absolute',
+    right: 10,
+    top: 0,
+    boxShadow: 'none',
+    transition: 'ease-in',
+    display: 'flex',
+  },
   overlay: {
     position: 'fixed',
     top: 0,
@@ -34,44 +32,60 @@ const useStyles = makeStyles({
     height: '100vh',
     zIndex: theme.zIndex.modal - 1,
   },
-  title: {
-    fontSize: '31px !important',
-    lineHeight: '47px',
-    verticalAlign: 'baseline',
-    marginTop: '7px',
-    textTransform: 'uppercase',
-    color: '#094fad',
-    fontWeight: 'bold',
-    marginBlockStart: '0.67em',
-    marginBlockEnd: '0.67em',
+  closeBtnContainer: {
+    position: 'fixed',
+    zIndex: 9999,
+    right: '550px',
   },
-  contentBody: {
-    margin: '30px',
-    fontSize: '16px',
+  parentTitle: {
+    fontSize: "1rem",
+    textTransform: "uppercase",
+    fontWeight: "bold",
+    position: "absolute",
+    left: 0,
+    bottom: 50,
+    color: "#fff",
+    zIndex: 9999,
+    border: '1px solid',
+    borderRadius: '25px',
+  },
+  title: {
+    fontSize: '1.5rem',
+    lineHeight: '2.5rem',
     verticalAlign: 'baseline',
+    textTransform: 'uppercase',
+    color: '#fff',
+    fontWeight: 'bold',
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+  },
+  header: {
+    fontSize: '1rem',
+    verticalAlign: 'baseline',
+  },
+  content: {
+    height: '45vh',
+    overflowY: 'scroll',
+    color: '#1E2A3B',
+    textAlign: 'justify',
+    fontFamily: 'Spoga Han Sans Neo',
+    fontSize: '1rem',
+    fontWeight: 400,
+    lineHeight: '170%',
+    padding: '25px',
+  },
+  footer: {
+    position: 'relative',
+    zIndex: 1000,
+    width: '100px',
+    height: '100px',
+    marginLeft: '25px',
+    marginTop: '25px',
   },
   imageContainer: {
-    height: 'auto',
     position: 'relative',
     overflow: 'hidden',
-    zIndex: 1,
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  contentInner: {
-    height: '250px',
-    overflowY: 'scroll',
-  },
-  closeIcon: {
-    color: '#094fad',
-    position: 'absolute',
-    top: '23px',
-    width: '40px',
-    height: '40px',
-    boxSizing: 'border-box',
-    zIndex: '100',
   },
 });
 
@@ -81,20 +95,28 @@ function Side({ open, onClose, value, actions }) {
   return (
     <>
       {open && (
-        <div className={classes.overlay}>
-          <Container open={open} onClose={onClose}>
-            <IconButton onClick={actions} sx={{ display: 'flex', justifyContent: 'right' }}>
-              <HighlightOff classes={{ root: classes.closeIcon }} />
+        // <div className={classes.overlay}>
+        <Container classes={{ paper: classes.container }} open={open} onClose={onClose}>
+          <div className={classes.closeBtnContainer}>
+            <IconButton onClick={actions} sx={{ padding: 0 }}>
+              <HighlightOff sx={{ color: '#fff', width: '40px', height: '40px' }} />
             </IconButton>
-            <DialogTitle classes={{ root: classes.title }}>{value.title}</DialogTitle>
-            <div className={classes.contentBody}>
-              <div className={classes.imageContainer}>
-                {value.imageUrl && <img src={value.imageUrl} alt="NONE" style={{ width: '410px', height: '205px' }} />}
-              </div>
-              <p className={classes.contentInner}>{value.text}</p>
+          </div>
+          <div className={classes.header}>
+            <div className={classes.imageContainer}>
+              {value.imageUrl && <img src={value.imageUrl} alt="NONE" style={{ width: '100%', height: '30vh' }} />}
+              {/*<DialogTitle classes={{ root: classes.parentTitle }}>부모이름</DialogTitle>*/}
+              <DialogTitle classes={{ root: classes.title }}>{value.title}</DialogTitle>
             </div>
-          </Container>
-        </div>
+          </div>
+          <div className={classes.content}>
+            <p>{value.text}</p>
+          </div>
+          <div className={classes.footer}>
+            {value.engQrUrl && <img src={value.engQrUrl} alt="NONE" style={{ width: '100%', height: '100%' }} />}
+          </div>
+        </Container>
+        // </div>
       )}
     </>
   );
