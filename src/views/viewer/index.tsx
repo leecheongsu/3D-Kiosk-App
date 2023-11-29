@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { firestore } from '@lib/firebase';
-import { useParams } from 'react-router';
 import Loading from '@components/Loading';
 import initialize from './initialize';
 import Category from '@components/Category';
@@ -10,9 +9,6 @@ type Props = {};
 
 function index({}: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const { id } = useParams<{
-    id: string;
-  }>();
   const [modelUrl, setModelUrl] = useState<string>('');
   const [icons, setIcons] = useState([]);
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -22,10 +18,16 @@ function index({}: Props) {
   useEffect(() => {
     async function setInit() {
       try {
-        const querySnapshot = await firestore().collection('intro_3d').where('title', '==', id).get();
+        /**
+         * 추후 리팩토링 할 것. 라우팅...
+         */
+        const location = window.location.href;
+        const locationTitle = location.includes('ulsan') ? 'ulsan' : location.includes('daejeon') ? 'daejeon' : '';
 
-        const url = querySnapshot.docs[0].data().modelUrl;
-        setModelUrl(url);
+        const querySnapshot = await firestore().collection('intro_3d').where('title', '==', locationTitle).get();
+
+        const modelUrl = querySnapshot.docs[0].data().modelUrl;
+        setModelUrl(modelUrl);
         setLoading(false);
 
         const path = querySnapshot.docs[0].ref.path;
