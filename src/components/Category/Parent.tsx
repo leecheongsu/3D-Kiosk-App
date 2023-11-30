@@ -57,7 +57,7 @@ function CategoryParent({ parent, children }) {
             </Contents>
           )}
           {!v.hasChild && (
-            <Button component={Link} to={v.linkUrl} disableRipple sx={BtnStyle} >
+            <Button component={Link} target="_blank" to={v.linkUrl} disableRipple sx={BtnStyle} >
               {v.title}
             </Button>
           )}

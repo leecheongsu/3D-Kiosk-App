@@ -54,7 +54,9 @@ function CategoryChild({ value }) {
       setModalValue(v)
     }
   };
-
+  /**
+   * 추후 리팩토링 할 것.
+   */
   return (
     <Child>
       {children.map((v) => (
@@ -66,6 +68,7 @@ function CategoryChild({ value }) {
           aria-expanded={open ? 'true' : undefined}
           onClick={(e) => handleClick(e, v)}
           sx={BtnStyle}
+          target="_blank"
           component={Link}
           to={v.linkUrl}
         >
