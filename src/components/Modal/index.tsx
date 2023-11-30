@@ -7,8 +7,6 @@ function Modal({ open, onClose, value, actions }) {
   /**
    * ACTION - Modal 만 분기 처리
    */
-  printLogObj(value)
-
 
   return (
   <>

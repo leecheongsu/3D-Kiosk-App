@@ -113,7 +113,7 @@ function Side({ open, onClose, value, actions }) {
             <p>{value.text}</p>
           </div>
           <div className={classes.footer}>
-            {value.engQrUrl && <img src={value.engQrUrl} alt="NONE" style={{ width: '100%', height: '100%' }} />}
+            {value.qrUrl && <img src={value.qrUrl} alt="NONE" style={{ width: '100%', height: '100%' }} />}
           </div>
         </Container>
         // </div>

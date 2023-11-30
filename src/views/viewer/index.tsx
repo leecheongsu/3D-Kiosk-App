@@ -4,23 +4,38 @@ import Loading from '@components/Loading';
 import initialize from './initialize';
 import Category from '@components/Category';
 import { Categories } from '@src/types/category';
+import { makeStyles } from '@mui/styles';
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 type Props = {};
 
+const useStyles = makeStyles({
+  box: {
+    position: 'absolute',
+    top: 20,
+    right: 100,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    padding: '10px',
+    zIndex: 100,
+  },
+});
+
 function index({}: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [modelUrl, setModelUrl] = useState<string>('');
+  const [modelUrl, setModelUrl] = useState('');
   const [icons, setIcons] = useState([]);
-  const [isLoading, setLoading] = useState<boolean>(true);
-  const [isInitialized, setInitialized] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState(true);
+  const [isInitialized, setInitialized] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [path, setPath] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('kor');
+  const classes = useStyles();
 
   useEffect(() => {
-    async function setInit() {
+    async function fetchData() {
       try {
-        /**
-         * 추후 리팩토링 할 것. 라우팅...
-         */
         const location = window.location.href;
         const locationTitle = location.includes('ulsan') ? 'ulsan' : location.includes('daejeon') ? 'daejeon' : '';
 
@@ -31,6 +46,7 @@ function index({}: Props) {
         setLoading(false);
 
         const path = querySnapshot.docs[0].ref.path;
+        setPath(path);
 
         const iconSnapshot = await firestore()
           .collection(path + '/icons')
@@ -51,33 +67,44 @@ function index({}: Props) {
           icons.push(inputData);
         });
         setIcons(icons);
-
-        //카테고리
-        const categories = await firestore()
-          .collection(path + '/category')
-          .get()
-          .then((data) => {
-            return data.docs.map((v) => v.data() as Categories);
-          });
-
-        const linkWithCategories = categories.map((value) => {
-          const isExist = icons.find((icon) => icon.label === value.title);
-          if (isExist) {
-            return {
-              ...value,
-              linkUrl: isExist.linkUrl,
-            };
-          }
-          return value;
-        });
-        if (categories.length > 0) setCategories(linkWithCategories);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('fetchData : ' + error);
       }
     }
 
-    setInit();
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchCategoryData();
+  }, [selectedLanguage, path]);
+
+  async function fetchCategoryData() {
+    try {
+      const contentPath = `${path}/${selectedLanguage}`;
+      const languageCategories = await firestore()
+        .collection(contentPath)
+        .get()
+        .then((data) => {
+          return data.docs.map((v) => v.data() as Categories);
+        });
+
+      const linkWithCategories = languageCategories.map((value) => {
+        const isExist = icons.find((icon) => icon.label === value.title);
+        if (isExist) {
+          return {
+            ...value,
+            linkUrl: isExist.linkUrl,
+          };
+        }
+        return value;
+      });
+
+      if (languageCategories.length > 0) setCategories(linkWithCategories);
+    } catch (error) {
+      console.error('fetchCategoryData :', error);
+    }
+  }
 
   useEffect(() => {
     if (isInitialized) return;
@@ -87,12 +114,30 @@ function index({}: Props) {
     }
   }, [canvas, modelUrl, icons]);
 
+  const handleLanguageChange = (event: React.MouseEvent<HTMLElement>, newLanguage: string) => {
+    if (newLanguage) {
+      setSelectedLanguage(newLanguage);
+    }
+  };
+
   return (
     <div>
       {isLoading ? (
         <Loading isLoading={isLoading} />
       ) : (
         <>
+          <div className={classes.box}>
+            <ToggleButtonGroup
+              exclusive
+              fullWidth
+              size="large"
+              value={selectedLanguage}
+              onChange={handleLanguageChange}
+            >
+              <ToggleButton value="kor">KO</ToggleButton>
+              <ToggleButton value="eng">EN</ToggleButton>
+            </ToggleButtonGroup>
+          </div>
           {categories.length > 0 && <Category value={categories} />}
           <div style={{ width: '100%', height: '100%', position: 'absolute', right: 0 }}>
             <canvas
@@ -108,7 +153,6 @@ function index({}: Props) {
               id="canvas"
             />
           </div>
-          x
         </>
       )}
     </div>
