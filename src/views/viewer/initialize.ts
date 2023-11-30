@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { printLogObj } from '@utils/printLog';
 import { Intersection, Object3D, Vector3 } from 'three';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
+import { useState } from "react";
 
 export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, icons: any) {
   // Canvas
@@ -120,8 +121,51 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     circleMesh.scale.set(distance / 40, distance / 40, distance / 40);
     // 아이콘 속성 설정
     circleMesh.userData = { URL: icon.linkUrl, TYPE: 'icon', LABEL: icon.label };
-
     scene.add(circleMesh);
+
+    const planeNormal = new THREE.Vector3();
+
+    const widthHalf = 0.5 * renderer.domElement.width;
+    const heightHalf = 0.5 * renderer.domElement.height;
+
+    circleMesh.updateMatrixWorld();
+    planeNormal.setFromMatrixPosition(circleMesh.matrixWorld);
+    planeNormal.project(camera);
+
+    planeNormal.x = (planeNormal.x * widthHalf) + widthHalf;
+    planeNormal.y = -(planeNormal.y * heightHalf) + heightHalf;
+
+
+    const htmlParagraphElement = document.createElement('p');
+    htmlParagraphElement.style.fontSize = '16px';
+    htmlParagraphElement.style.color = 'white';
+    htmlParagraphElement.style.zIndex = '9999';
+    htmlParagraphElement.style.fontWeight = '900';
+    htmlParagraphElement.textContent = icon.label;
+
+    const htmlDivElement = document.createElement('div');
+    htmlDivElement.id = icon.label;
+    htmlDivElement.appendChild(htmlParagraphElement);
+    htmlDivElement.style.zIndex = '999';
+    htmlDivElement.style.position = 'fixed';
+    htmlDivElement.style.left = `${planeNormal.x}px`;
+    htmlDivElement.style.top = `${planeNormal.y}px`;
+    htmlDivElement.style.display = 'flex';
+    htmlDivElement.style.width = 'auto';
+    htmlDivElement.style.height = 'auto';
+    htmlDivElement.style.background = '#094fad';
+    htmlDivElement.style.visibility = 'hidden';
+    htmlDivElement.style.textAlign = 'center';
+    htmlDivElement.style.padding = '0px 15px';
+    htmlDivElement.style.borderRadius = '10px';
+    htmlDivElement.style.textAlign = 'center';
+
+    document.body.appendChild(htmlDivElement);
+
+    const css3DObject = new CSS3DObject(htmlDivElement);
+    css3DObject.position.set(x, y, z);
+
+    scene.add(css3DObject);
   });
 
   // 그리기
@@ -164,12 +208,13 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   function resetIconScales() {
     scene.children.forEach((v) => {
       if (v.userData && v.userData.TYPE === 'icon') {
-        const {x, y, z}  = v.position
+        const { x, y, z } = v.position;
         const distance = Math.sqrt(
           Math.pow(camera.position.x - x, 2) + Math.pow(camera.position.y - y, 2) + Math.pow(camera.position.z - z, 2),
         );
         // 아이콘 크기 조절
         v.scale.set(distance / 40, distance / 40, distance / 40);
+        document.getElementById(v.userData.LABEL).style.visibility = 'hidden';
       }
     });
   }
@@ -185,6 +230,8 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
       if (intersects.length !== 0) {
         if (intersects[0].object.userData.TYPE === 'icon') {
           intersects[0].object.scale.set(2, 2, 2);
+          const elementById = document.getElementById(intersects[0].object.userData.LABEL);
+          elementById.style.visibility = 'visible';
         } else {
           resetIconScales();
         }
@@ -194,7 +241,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     };
     listener();
   };
-
 
   const mouseUpListener = (e: MouseEvent) => {
     pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
