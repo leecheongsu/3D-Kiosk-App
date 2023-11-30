@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { printLogObj } from '@utils/printLog';
-import { Vector3 } from 'three';
+import { Intersection, Object3D, Vector3 } from 'three';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 
 export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, icons: any) {
@@ -119,7 +119,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     // 아이콘 크기 조절
     circleMesh.scale.set(distance / 40, distance / 40, distance / 40);
     // 아이콘 속성 설정
-    circleMesh.userData = { URL: icon.linkUrl, TYPE: 'icon', LABEL: icon.label, POSITION: icon.position, RADIUS : icon.radius };
+    circleMesh.userData = { URL: icon.linkUrl, TYPE: 'icon', LABEL: icon.label };
 
     scene.add(circleMesh);
   });
@@ -149,10 +149,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
   draw();
 
-  // 화면 리사이즈
-  /**
-   *  NOTICE.  -> 카테고리에 따라 Camera 위치 조정해야할 듯
-   */
   function resizeCanvas() {
     const newWidth = window.innerWidth;
     const newHeight = window.innerHeight;
@@ -165,29 +161,50 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     camera.updateProjectionMatrix();
   }
 
+  function resetIconScales() {
+    scene.children.forEach((v) => {
+      if (v.userData && v.userData.TYPE === 'icon') {
+        const {x, y, z}  = v.position
+        const distance = Math.sqrt(
+          Math.pow(camera.position.x - x, 2) + Math.pow(camera.position.y - y, 2) + Math.pow(camera.position.z - z, 2),
+        );
+        // 아이콘 크기 조절
+        v.scale.set(distance / 40, distance / 40, distance / 40);
+      }
+    });
+  }
+
   const mouseMoveListener = (e: MouseEvent) => {
     const listener = () => {
       pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
       pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
-      // find intersections
       raycaster.setFromCamera(pointer, camera);
       const intersects = raycaster.intersectObjects(scene.children, true);
 
+      if (intersects.length !== 0) {
+        if (intersects[0].object.userData.TYPE === 'icon') {
+          intersects[0].object.scale.set(2, 2, 2);
+        } else {
+          resetIconScales();
+        }
+      } else {
+        resetIconScales();
+      }
     };
     listener();
   };
+
 
   const mouseUpListener = (e: MouseEvent) => {
     pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
-    // find intersections
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(scene.children, true);
 
     if (intersects.length !== 0) {
-      if (intersects[0].object.userData.TYPE == 'icon') {
+      if (intersects[0].object.userData.TYPE === 'icon') {
         window.open(intersects[0].object.userData.URL, '_blank');
       } else {
       }
