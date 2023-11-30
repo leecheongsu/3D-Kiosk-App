@@ -5,7 +5,8 @@ import initialize from './initialize';
 import Category from '@components/Category';
 import { Categories } from '@src/types/category';
 import { makeStyles } from '@mui/styles';
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { useParams } from 'react-router';
 
 type Props = {};
 
@@ -32,17 +33,17 @@ function index({}: Props) {
   const [path, setPath] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('kor');
   const classes = useStyles();
+  const { id } = useParams<{ id: string }>();
+  const [isShowLanguage, setIsShowLanguage] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const location = window.location.href;
-        const locationTitle = location.includes('ulsan') ? 'ulsan' : location.includes('daejeon') ? 'daejeon' : '';
-
-        const querySnapshot = await firestore().collection('intro_3d').where('title', '==', locationTitle).get();
-
+        const querySnapshot = await firestore().collection('intro_3d').where('title', '==', id).get();
         const modelUrl = querySnapshot.docs[0].data().modelUrl;
+        const showLanguage = querySnapshot.docs[0].data().showLanguage;
         setModelUrl(modelUrl);
+        setIsShowLanguage(showLanguage);
         setLoading(false);
 
         const path = querySnapshot.docs[0].ref.path;
@@ -126,18 +127,20 @@ function index({}: Props) {
         <Loading isLoading={isLoading} />
       ) : (
         <>
-          <div className={classes.box}>
-            <ToggleButtonGroup
-              exclusive
-              fullWidth
-              size="large"
-              value={selectedLanguage}
-              onChange={handleLanguageChange}
-            >
-              <ToggleButton value="kor">KO</ToggleButton>
-              <ToggleButton value="eng">EN</ToggleButton>
-            </ToggleButtonGroup>
-          </div>
+          {isShowLanguage && (
+            <div className={classes.box}>
+              <ToggleButtonGroup
+                exclusive
+                fullWidth
+                size="large"
+                value={selectedLanguage}
+                onChange={handleLanguageChange}
+              >
+                <ToggleButton value="kor">KO</ToggleButton>
+                <ToggleButton value="eng">EN</ToggleButton>
+              </ToggleButtonGroup>
+            </div>
+          )}
           {categories.length > 0 && <Category value={categories} />}
           <div style={{ width: '100%', height: '100%', position: 'absolute', right: 0 }}>
             <canvas

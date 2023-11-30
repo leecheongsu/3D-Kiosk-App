@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import { Button } from '@mui/material';
 import Child from '@components/Category/Child';
 import { Link } from 'react-router-dom';
+import { printLogObj } from "@utils/printLog";
 
 const Parent = styled(Accordion)`
   width: 250px;
@@ -42,6 +43,9 @@ function CategoryParent({ parent, children }) {
   const handleChange = (id: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? id : false);
   };
+
+  printLogObj(parent)
+  printLogObj(children)
 
   return (
     <>

@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { printLogObj } from "@utils/printLog";
-import { Vector3 } from "three";
-import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
+import { printLogObj } from '@utils/printLog';
+import { Vector3 } from 'three';
+import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 
 export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, icons: any) {
   // Canvas
@@ -41,7 +41,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.y = 20;
-  camera.position.z = 40;
+  camera.position.z = 55;
 
   // RayCaster
   const raycaster = new THREE.Raycaster();
@@ -82,6 +82,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     model = gltf.scene;
     model.scale.set(0.3, 0.3, 0.3);
     model.position.y = -6;
+    model.position.x -= 15;
     scene.add(model);
     mixer = new THREE.AnimationMixer(model);
 
@@ -94,6 +95,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     }
   });
 
+  const tooltips = [];
   // 아이콘 넣기
   icons.forEach((icon) => {
     const { x, y, z } = icon.position;
@@ -111,9 +113,9 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
     let circleMesh = new THREE.Mesh(circleGeom, circleMat);
     circleMesh.position.set(x, y, z);
-
+    circleMesh.scale()
     // 아이콘 속성 설정
-    circleMesh.userData = { URL: icon.linkUrl, TYPE: 'icon', isHovered: false };
+    circleMesh.userData = { URL: icon.linkUrl, TYPE: 'icon', LABEL: icon.label, POSITION: icon.position, RADIUS : icon.radius };
 
     scene.add(circleMesh);
   });
@@ -158,8 +160,61 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     camera.aspect = newWidth / newHeight;
     camera.updateProjectionMatrix();
   }
+  const createLabel = (text: string, x: number, y: number) => {
+    const label = document.createElement('p');
+    label.id = 'label';
+    label.textContent = text;
+    label.style.position = 'absolute';
+    label.style.backgroundColor = 'blue';
+    label.style.color = 'white';
+    label.style.padding = '5px';
+    label.style.left = `${x}px`;
+    label.style.top = `${y}px`;
 
-  //아이콘 클릭
+    document.body.appendChild(label);
+  };
+
+  const removeLabel = () => {
+    const label = document.getElementById('label');
+    if (label) {
+      document.body.removeChild(label);
+    }
+  };
+
+  let isMouseInsideIcon = false;
+  const mouseMoveListener = (e: MouseEvent) => {
+    const listener = () => {
+      pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+      // find intersections
+      raycaster.setFromCamera(pointer, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true);
+
+      if (intersects.length !== 0) {
+        const { URL, TYPE, LABEL, POSITION, RADIUS } = intersects[0].object.userData;
+        isMouseInsideIcon = TYPE === 'icon';
+        if (isMouseInsideIcon) {
+          // 아이콘 크기 조절
+          if(intersects[0].object.scale.x === 1)
+          intersects[0].object.scale.set(1.2, 1.2, 1.2)
+          const label = document.getElementById('label');
+
+          if (label) {
+            label.textContent = LABEL;
+          } else {
+            console.log('x : ' + e.clientX + '\n y : ' + e.clientY)
+            createLabel(LABEL, e.clientX, e.clientY);
+          }
+        }
+      } else {
+        isMouseInsideIcon = false;
+        removeLabel();
+      }
+    };
+    listener();
+  };
+
   const mouseUpListener = (e: MouseEvent) => {
     pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -177,10 +232,24 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     }
   };
 
+  /**
+   * NOTICE. 3D 마우스 포인터 좌표값
+   */
+  // const clickListener = (e: MouseEvent) => {
+  //   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+  //   pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  //
+  //   planeNormal.copy(camera.position).normalize();
+  //   plane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(plane.normal), scene.position);
+  //
+  //   raycaster.setFromCamera(pointer, camera);
+  //   const data = new Vector3();
+  //   raycaster.ray.intersectPlane(plane, data);
+  //
+  //   printLogObj(data);
+  // };
 
   window.addEventListener('resize', resizeCanvas);
-  window.addEventListener('mouseup', mouseUpListener);
-  // window.addEventListener('mousemove', (e) => {
-  //   console.log(1)
-  // });
+  window.addEventListener('mousemove', mouseMoveListener);
+  window.addEventListener('click', mouseUpListener);
 }

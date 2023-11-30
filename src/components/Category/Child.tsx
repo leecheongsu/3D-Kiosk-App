@@ -40,6 +40,10 @@ function CategoryChild({ value }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalValue, setModalValue] = useState({})
 
+  useEffect(() => {
+    const sorted = [...value].sort((a, b) => a.order - b.order);
+    setChildren(sorted);
+  }, []);
   const handleClick = (e, v) => {
     setAnchorEl(e.currentTarget);
     /**
@@ -50,10 +54,6 @@ function CategoryChild({ value }) {
       setModalValue(v)
     }
   };
-  useEffect(() => {
-    const sorted = [...value].sort((a, b) => a.order - b.order);
-    setChildren(sorted);
-  }, []);
 
   return (
     <Child>
@@ -66,8 +66,8 @@ function CategoryChild({ value }) {
           aria-expanded={open ? 'true' : undefined}
           onClick={(e) => handleClick(e, v)}
           sx={BtnStyle}
-          // component={Link}
-          // to={v.linkUrl}
+          component={Link}
+          to={v.linkUrl}
         >
           {v.title}
         </Button>
