@@ -7,7 +7,6 @@ import { Categories } from '@src/types/category';
 import { makeStyles } from '@mui/styles';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useParams } from 'react-router';
-import { duplicateCollection } from "@utils/query";
 
 type Props = {};
 
