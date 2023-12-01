@@ -45,8 +45,8 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   const pointer = new THREE.Vector2();
 
   //Distance, Vector3
-  const plane = new THREE.Plane();
-  const planeNormal = new THREE.Vector3();
+  // const plane = new THREE.Plane();
+  // const planeNormal = new THREE.Vector3();
 
   // Lights
   // 전역으로 빛 방출
@@ -120,9 +120,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
     const planeNormal = new THREE.Vector3();
 
-    const widthHalf = 0.5 * renderer.domElement.width;
-    const heightHalf = 0.5 * renderer.domElement.height;
-
     circleMesh.updateMatrixWorld();
     planeNormal.setFromMatrixPosition(circleMesh.matrixWorld);
     planeNormal.project(camera);
@@ -159,13 +156,8 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     const fontFace = 'Arial';
     const fontWeight = 'bold';
     const fontColor = 'white';
-    const lineHeight = 1.5;
     const padding = 5 * 10;
     const text = icon.caption;
-    const textWidth = context.measureText(text).width * 10 * 0.8;
-    const textHeight = fontSize * lineHeight;
-    const width = textWidth + padding * 2;
-    const height = textHeight + padding * 2;
 
     // draw background border radius 10px 사각형을 캔버스의 중앙에 그린다.
     context.fillStyle = 'rgba(0,0,0,0.5)';
@@ -251,7 +243,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
         );
         // 아이콘 크기 조절
         v.scale.set(distance / 40, distance / 40, distance / 40);
-        // document.getElementById(v.userData.LABEL).style.visibility = 'hidden';
       }
     });
   }
@@ -268,7 +259,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
         if (intersects[0].object.userData.TYPE === 'icon') {
           intersects[0].object.scale.set(2, 2, 2);
           const elementById = document.getElementById(intersects[0].object.userData.LABEL);
-          // elementById.style.visibility = 'visible';
         } else {
           resetIconScales();
         }
