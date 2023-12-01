@@ -13,7 +13,7 @@ type Props = {};
 
 const useStyles = makeStyles({
   box: {
-    position: 'absolute',
+    position: 'fixed',
     top: 20,
     right: 100,
     display: 'flex',
@@ -23,10 +23,20 @@ const useStyles = makeStyles({
     zIndex: 100,
   },
   logo: {
-    position: 'absolute',
+    position: 'fixed',
     top: 20,
     left: 100,
     zIndex: 100,
+  },
+  '@media(max-width: 600px)': {
+    box: {
+      top: 5,
+      right: 25,
+    },
+    logo: {
+      top: 5,
+      left: 25,
+    },
   },
 });
 

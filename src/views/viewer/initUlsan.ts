@@ -188,7 +188,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     });
     const geometry = new THREE.PlaneGeometry(canvas.width / 256, canvas.height / 256);
     const mesh = new THREE.Mesh(geometry, material);
-    // mesh.scale.set(0.8, 0.8, 0.8);
     mesh.position.set(x, y + 1.5, z - 0.1);
     mesh.userData = { TYPE: 'label' };
     scene.add(mesh);

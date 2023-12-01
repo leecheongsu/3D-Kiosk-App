@@ -79,7 +79,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     model = gltf.scene;
     model.scale.set(0.3, 0.3, 0.3);
     model.position.y = -6;
-    model.position.x -= 15;
     scene.add(model);
     mixer = new THREE.AnimationMixer(model);
 
