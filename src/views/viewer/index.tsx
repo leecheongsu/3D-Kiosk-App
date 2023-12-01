@@ -7,6 +7,7 @@ import { Categories } from '@src/types/category';
 import { makeStyles } from '@mui/styles';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useParams } from 'react-router';
+import { printLogObj } from "@utils/printLog";
 
 type Props = {};
 
@@ -36,10 +37,16 @@ function index({}: Props) {
   const { id } = useParams<{ id: string }>();
   const [isShowLanguage, setIsShowLanguage] = useState(false);
 
+  /**
+   * TODO. 배포시 prod로 설정하는 script 작성할 것.
+   */
+  const prod = 'intro_3d';
+  const dev = 'dev_intro_3d';
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const querySnapshot = await firestore().collection('intro_3d').where('title', '==', id).get();
+        const querySnapshot = await firestore().collection(dev).where('title', '==', id).get();
         const modelUrl = querySnapshot.docs[0].data().modelUrl;
         const showLanguage = querySnapshot.docs[0].data().showLanguage;
         setModelUrl(modelUrl);
@@ -53,7 +60,6 @@ function index({}: Props) {
           .collection(path + '/icons')
           .get();
 
-        //아이콘
         const icons = [];
         iconSnapshot.docs.forEach((doc) => {
           const inputData = {
@@ -63,8 +69,8 @@ function index({}: Props) {
               y: doc.data().y,
               z: doc.data().z,
             },
+            caption: doc.data().label[selectedLanguage]
           };
-          //리팩토링 할 것.
           icons.push(inputData);
         });
         setIcons(icons);
@@ -72,13 +78,8 @@ function index({}: Props) {
         console.error('fetchData : ' + error);
       }
     }
-
     fetchData();
   }, []);
-
-  useEffect(() => {
-    fetchCategoryData();
-  }, [selectedLanguage, path]);
 
   async function fetchCategoryData() {
     try {
@@ -90,28 +91,29 @@ function index({}: Props) {
           return data.docs.map((v) => v.data() as Categories);
         });
 
-      const linkWithCategories = languageCategories.map((value) => {
-        const isExist = icons.find((icon) => icon.label === value.title);
-        if (isExist) {
-          return {
-            ...value,
-            linkUrl: isExist.linkUrl,
-          };
-        }
-        return value;
-      });
-
-      if (languageCategories.length > 0) setCategories(linkWithCategories);
+      if (languageCategories.length > 0) setCategories(languageCategories);
     } catch (error) {
       console.error('fetchCategoryData :', error);
     }
   }
 
+
+
   useEffect(() => {
-    if (isInitialized) return;
+    fetchCategoryData();
+    function setNewIcons() {
+        const newIcons = icons.map(v => ({
+          ...v,
+          caption : v.label[selectedLanguage]
+        }));
+        setIcons(newIcons);
+    }
+    setNewIcons();
+  }, [selectedLanguage, path]);
+
+  useEffect(() => {
     if (canvas.current && modelUrl && icons.length > 0) {
       initialize(canvas.current, modelUrl, icons);
-      setInitialized(true);
     }
   }, [canvas, modelUrl, icons]);
 

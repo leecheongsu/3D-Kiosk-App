@@ -1,10 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { printLogObj } from '@utils/printLog';
-import { Intersection, Object3D, Vector3 } from 'three';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
-import { useState } from "react";
 
 export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, icons: any) {
   // Canvas
@@ -96,7 +93,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     }
   });
 
-  const tooltips = [];
   // 아이콘 넣기
   icons.forEach((icon) => {
     const { x, y, z } = icon.position;
@@ -120,7 +116,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     // 아이콘 크기 조절
     circleMesh.scale.set(distance / 40, distance / 40, distance / 40);
     // 아이콘 속성 설정
-    circleMesh.userData = { URL: icon.linkUrl, TYPE: 'icon', LABEL: icon.label };
+    circleMesh.userData = { URL: icon.linkUrl, TYPE: 'icon', LABEL: icon.caption };
     scene.add(circleMesh);
 
     const planeNormal = new THREE.Vector3();
@@ -141,10 +137,10 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     htmlParagraphElement.style.color = 'white';
     htmlParagraphElement.style.zIndex = '9999';
     htmlParagraphElement.style.fontWeight = '900';
-    htmlParagraphElement.textContent = icon.label;
+    htmlParagraphElement.textContent = icon.caption;
 
     const htmlDivElement = document.createElement('div');
-    htmlDivElement.id = icon.label;
+    htmlDivElement.id = icon.caption;
     htmlDivElement.appendChild(htmlParagraphElement);
     htmlDivElement.style.zIndex = '999';
     htmlDivElement.style.position = 'fixed';

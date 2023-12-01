@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { ACTION } from '@src/types/category';
 import Modal from '@components/Modal';
-import { printLogObj } from '@utils/printLog';
 import { Link } from 'react-router-dom';
 
 const Child = styled(AccordionDetails)`
