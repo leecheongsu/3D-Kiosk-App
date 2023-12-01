@@ -129,8 +129,29 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
 
     // make always showing label by CanvasTexture
     const canvas = document.createElement('canvas');
+    // text 길이 구하기
+    // icon.caption 의 영문과 한글 수 구하기
+    let en = 0;
+    let ko = 0;
+    let space = 0;
+    let spacial_char = 0;
+    for (let i = 0; i < icon.caption.length; i++) {
+      const charCode = icon.caption.charCodeAt(i);
+      if (charCode >= 0 && charCode <= 128) {
+        en++;
+      } else if (charCode >= 0xac00 && charCode <= 0xd7a3) {
+        ko++;
+      } else if (charCode >= 0x3131 && charCode <= 0x3163) {
+        ko++;
+      } else if (charCode >= 0x21 && charCode <= 0x2f) {
+        spacial_char++;
+      }
+      if (icon.caption[i] === ' ') {
+        space++;
+      }
+    }
     //canvas 해상도 설정
-    canvas.width = 2048;
+    canvas.width = (2048 / 16) * 1.2 * ko + (2048 / 30) * 1.2 * (en + space) + 256;
     canvas.height = 1024 / 5;
 
     const context = canvas.getContext('2d');
@@ -195,6 +216,9 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     // 아이콘과 라벨을 카메라 방향으로 보기
     scene.traverse(function (object) {
       if (object.userData.TYPE == 'icon') {
+        object.lookAt(camera.position);
+      }
+      if (object.userData.TYPE == 'label') {
         object.lookAt(camera.position);
       }
     });
