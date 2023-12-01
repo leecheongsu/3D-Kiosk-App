@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { firestore } from '@lib/firebase';
 import Loading from '@components/Loading';
-import initialize from './initialize';
+import initialize from './initUlsan';
 import Category from '@components/Category';
 import { Categories } from '@src/types/category';
 import { makeStyles } from '@mui/styles';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useParams } from 'react-router';
+import initDaejeon from './initDaejeon';
 
 type Props = {};
 
@@ -26,7 +27,7 @@ const useStyles = makeStyles({
     top: 20,
     left: 100,
     zIndex: 100,
-  }
+  },
 });
 
 function index({}: Props) {
@@ -52,7 +53,7 @@ function index({}: Props) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const querySnapshot = await firestore().collection(prod).where('title', '==', id).get();
+        const querySnapshot = await firestore().collection(dev).where('title', '==', id).get();
         const modelUrl = querySnapshot.docs[0].data().modelUrl;
         const showLanguage = querySnapshot.docs[0].data().showLanguage;
         setModelUrl(modelUrl);
@@ -120,8 +121,16 @@ function index({}: Props) {
   }, [selectedLanguage, path]);
 
   useEffect(() => {
+    /**
+     * TODO. 추후 Layout으로 변경할 것.
+     */
     if (canvas.current && modelUrl && icons.length > 0) {
-      initialize(canvas.current, modelUrl, icons);
+      id === 'ulsan'
+        ? initialize(canvas.current, modelUrl, icons)
+        : id === 'daejeon'
+        ? initDaejeon(canvas.current, modelUrl, icons)
+        : '';
+      // initialize(canvas.current, modelUrl, icons);
     }
   }, [canvas, modelUrl, icons]);
 
@@ -139,7 +148,7 @@ function index({}: Props) {
         <>
           {ogImage && (
             <div className={classes.logo}>
-              <img src={ogImage} alt="" style={{ width: '150px', height: 'auto'}} />
+              <img src={ogImage} alt="" style={{ width: '150px', height: 'auto' }} />
             </div>
           )}
           {isShowLanguage && (
