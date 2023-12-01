@@ -130,7 +130,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     // make always showing label by CanvasTexture
     const canvas = document.createElement('canvas');
     //canvas 해상도 설정
-    canvas.width = 2048 * 1.2;
+    canvas.width = 2048;
     canvas.height = 1024 / 5;
 
     const context = canvas.getContext('2d');
@@ -227,6 +227,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
         );
         // 아이콘 크기 조절
         v.scale.set(distance / 40, distance / 40, distance / 40);
+        // document.getElementById(v.userData.LABEL).style.visibility = 'hidden';
       }
     });
   }
@@ -243,6 +244,7 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
         if (intersects[0].object.userData.TYPE === 'icon') {
           intersects[0].object.scale.set(2, 2, 2);
           const elementById = document.getElementById(intersects[0].object.userData.LABEL);
+          // elementById.style.visibility = 'visible';
         } else {
           resetIconScales();
         }
