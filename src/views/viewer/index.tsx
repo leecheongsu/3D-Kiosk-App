@@ -7,6 +7,7 @@ import { Categories } from '@src/types/category';
 import { makeStyles } from '@mui/styles';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useParams } from 'react-router';
+import { duplicateCollection } from "@utils/query";
 
 type Props = {};
 
@@ -52,7 +53,7 @@ function index({}: Props) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const querySnapshot = await firestore().collection(dev).where('title', '==', id).get();
+        const querySnapshot = await firestore().collection(prod).where('title', '==', id).get();
         const modelUrl = querySnapshot.docs[0].data().modelUrl;
         const showLanguage = querySnapshot.docs[0].data().showLanguage;
         setModelUrl(modelUrl);

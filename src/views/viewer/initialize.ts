@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 
 export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, icons: any) {
   // Canvas
@@ -128,40 +127,58 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     planeNormal.setFromMatrixPosition(circleMesh.matrixWorld);
     planeNormal.project(camera);
 
-    planeNormal.x = (planeNormal.x * widthHalf) + widthHalf;
-    planeNormal.y = -(planeNormal.y * heightHalf) + heightHalf;
+    // make always showing label by CanvasTexture
+    const canvas = document.createElement('canvas');
+    //canvas 해상도 설정
+    canvas.width = 2048 * 1.2;
+    canvas.height = 1024 / 5;
 
+    const context = canvas.getContext('2d');
+    const fontSize = 16 * 10;
+    const fontFace = 'Arial';
+    const fontWeight = 'bold';
+    const fontColor = 'white';
+    const lineHeight = 1.5;
+    const padding = 5 * 10;
+    const text = icon.caption;
+    const textWidth = context.measureText(text).width * 10 * 0.8;
+    const textHeight = fontSize * lineHeight;
+    const width = textWidth + padding * 2;
+    const height = textHeight + padding * 2;
 
-    const htmlParagraphElement = document.createElement('p');
-    htmlParagraphElement.style.fontSize = '16px';
-    htmlParagraphElement.style.color = 'white';
-    htmlParagraphElement.style.zIndex = '9999';
-    htmlParagraphElement.style.fontWeight = '900';
-    htmlParagraphElement.textContent = icon.caption;
+    // draw background border radius 10px 사각형을 캔버스의 중앙에 그린다.
+    context.fillStyle = 'rgba(0,0,0,0.5)';
+    context.beginPath();
+    context.moveTo(canvas.width / 2, 0);
+    context.lineTo(canvas.width - 10, 0);
+    context.quadraticCurveTo(canvas.width, 0, canvas.width, 10);
+    context.lineTo(canvas.width, canvas.height - 10);
+    context.quadraticCurveTo(canvas.width, canvas.height, canvas.width - 10, canvas.height);
+    context.lineTo(10, canvas.height);
+    context.quadraticCurveTo(0, canvas.height, 0, canvas.height - 10);
+    context.lineTo(0, 10);
+    context.quadraticCurveTo(0, 0, 10, 0);
+    context.closePath();
+    context.fill();
 
-    const htmlDivElement = document.createElement('div');
-    htmlDivElement.id = icon.caption;
-    htmlDivElement.appendChild(htmlParagraphElement);
-    htmlDivElement.style.zIndex = '999';
-    htmlDivElement.style.position = 'fixed';
-    htmlDivElement.style.left = `${planeNormal.x}px`;
-    htmlDivElement.style.top = `${planeNormal.y}px`;
-    htmlDivElement.style.display = 'flex';
-    htmlDivElement.style.width = 'auto';
-    htmlDivElement.style.height = 'auto';
-    htmlDivElement.style.background = '#094fad';
-    htmlDivElement.style.visibility = 'hidden';
-    htmlDivElement.style.textAlign = 'center';
-    htmlDivElement.style.padding = '0px 15px';
-    htmlDivElement.style.borderRadius = '10px';
-    htmlDivElement.style.textAlign = 'center';
+    // draw text
+    context.font = `${fontWeight} ${fontSize}px ${fontFace}`;
+    context.fillStyle = fontColor;
+    context.textBaseline = 'top';
+    context.textAlign = 'center';
+    context.fillText(text, canvas.width / 2, padding);
 
-    document.body.appendChild(htmlDivElement);
-
-    const css3DObject = new CSS3DObject(htmlDivElement);
-    css3DObject.position.set(x, y, z);
-
-    scene.add(css3DObject);
+    const _texture = new THREE.CanvasTexture(canvas);
+    const material = new THREE.MeshBasicMaterial({
+      map: _texture,
+      transparent: true,
+    });
+    const geometry = new THREE.PlaneGeometry(canvas.width / 256, canvas.height / 256);
+    const mesh = new THREE.Mesh(geometry, material);
+    // mesh.scale.set(0.8, 0.8, 0.8);
+    mesh.position.set(x, y + 1.5, z - 0.1);
+    mesh.userData = { TYPE: 'label' };
+    scene.add(mesh);
   });
 
   // 그리기
@@ -210,7 +227,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
         );
         // 아이콘 크기 조절
         v.scale.set(distance / 40, distance / 40, distance / 40);
-        document.getElementById(v.userData.LABEL).style.visibility = 'hidden';
       }
     });
   }
@@ -227,7 +243,6 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
         if (intersects[0].object.userData.TYPE === 'icon') {
           intersects[0].object.scale.set(2, 2, 2);
           const elementById = document.getElementById(intersects[0].object.userData.LABEL);
-          elementById.style.visibility = 'visible';
         } else {
           resetIconScales();
         }

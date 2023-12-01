@@ -9,14 +9,14 @@ export async function duplicateCollection() {
     const devUlsan = 'dev_intro_3d/24MNk1rIJ6KMb669P9yD';
     const devDaejeon = 'dev_intro_3d/Jp6RYo6saJ7aiVpKXcEs';
 
-    const sourceSnapshot = await firestore().collection(prodDaejeon + '/icons').get();
+    const sourceSnapshot = await firestore().collection(devUlsan + '/icons').get();
 
     const batch = firestore().batch();
 
     sourceSnapshot.forEach((doc) => {
       const data = doc.data();
       const newDocRef = firestore()
-        .collection(devDaejeon + '/icons')
+        .collection(prodUlsan+ '/icons')
         .doc(doc.id);
       batch.set(newDocRef, data);
     });
