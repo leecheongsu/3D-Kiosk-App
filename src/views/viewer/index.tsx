@@ -7,7 +7,6 @@ import { Categories } from '@src/types/category';
 import { makeStyles } from '@mui/styles';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useParams } from 'react-router';
-import { printLogObj } from "@utils/printLog";
 
 type Props = {};
 
@@ -22,6 +21,12 @@ const useStyles = makeStyles({
     padding: '10px',
     zIndex: 100,
   },
+  logo: {
+    position: 'absolute',
+    top: 20,
+    left: 100,
+    zIndex: 100,
+  }
 });
 
 function index({}: Props) {
@@ -36,6 +41,7 @@ function index({}: Props) {
   const classes = useStyles();
   const { id } = useParams<{ id: string }>();
   const [isShowLanguage, setIsShowLanguage] = useState(false);
+  const [ogImage, setOgImage] = useState('');
 
   /**
    * TODO. 배포시 prod로 설정하는 script 작성할 것.
@@ -51,6 +57,7 @@ function index({}: Props) {
         const showLanguage = querySnapshot.docs[0].data().showLanguage;
         setModelUrl(modelUrl);
         setIsShowLanguage(showLanguage);
+        setOgImage(querySnapshot.docs[0].data().ogImage);
         setLoading(false);
 
         const path = querySnapshot.docs[0].ref.path;
@@ -69,7 +76,7 @@ function index({}: Props) {
               y: doc.data().y,
               z: doc.data().z,
             },
-            caption: doc.data().label[selectedLanguage]
+            caption: doc.data().label[selectedLanguage],
           };
           icons.push(inputData);
         });
@@ -78,6 +85,7 @@ function index({}: Props) {
         console.error('fetchData : ' + error);
       }
     }
+
     fetchData();
   }, []);
 
@@ -97,17 +105,17 @@ function index({}: Props) {
     }
   }
 
-
-
   useEffect(() => {
     fetchCategoryData();
+
     function setNewIcons() {
-        const newIcons = icons.map(v => ({
-          ...v,
-          caption : v.label[selectedLanguage]
-        }));
-        setIcons(newIcons);
+      const newIcons = icons.map((v) => ({
+        ...v,
+        caption: v.label[selectedLanguage],
+      }));
+      setIcons(newIcons);
     }
+
     setNewIcons();
   }, [selectedLanguage, path]);
 
@@ -129,6 +137,11 @@ function index({}: Props) {
         <Loading isLoading={isLoading} />
       ) : (
         <>
+          {ogImage && (
+            <div className={classes.logo}>
+              <img src={ogImage} alt="" style={{ width: '150px', height: 'auto'}} />
+            </div>
+          )}
           {isShowLanguage && (
             <div className={classes.box}>
               <ToggleButtonGroup
