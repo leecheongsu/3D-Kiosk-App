@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Vector3 } from "three";
 import { printLogObj } from "@utils/printLog";
+import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, icons: any) {
   // Canvas
@@ -233,6 +234,44 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
     // 카메라 비율 조정
     camera.aspect = newWidth / newHeight;
     camera.updateProjectionMatrix();
+
+  //   /* PC , 테블릿 가로 (해상도 768px ~ 1023px)*/
+  // @media all and (min-width:768px) and (max-width:1023px) { /*스타일입력*/}
+  //
+  //   /* 테블릿 세로 (해상도 768px ~ 1023px)*/
+  // @media all and (min-width:768px) and (max-width:1023px) { /*스타일입력*/}
+  //
+  //   /* 모바일 가로, 테블릿 세로 (해상도 480px ~ 767px)*/
+  // @media all and (min-width:480px) and (max-width:767px) { /*스타일입력*/}
+  //
+  //   /* 모바일 가로, 테블릿 세로 (해상도 ~ 479px)*/
+  // @media all and (max-width:479px) { /*스타일입력*/}
+  //   출처: https://eunyoe.tistory.com/17 [eunyo의 it이야기:티스토리]
+
+
+    if(newWidth  <= 1300) {
+
+    }
+    // const rotateContainer = window.document.createElement('div');
+    // const rotateButton = window.document.createElement('button');
+    //
+    // rotateContainer.style.zIndex = '999';
+    // rotateContainer.style.height = '30vh';
+    // rotateContainer.style.width = '30vw';
+    // rotateContainer.style.background = 'grey';
+    //
+    // rotateButton.style.zIndex = '9999'
+    // rotateButton.style.height = '10vh';
+    // rotateButton.style.width = '10vw'
+    // rotateButton.style.color = '#fff';
+    // rotateButton.textContent = 'rightBtn'
+    // rotateContainer.appendChild(rotateButton)
+    //
+    // document.body.appendChild(rotateContainer);
+    //
+    // const css3DObject = new CSS3DObject(rotateContainer);
+    //
+    // scene.add(css3DObject)
   }
 
   function resetIconScales() {
