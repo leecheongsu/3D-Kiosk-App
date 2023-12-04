@@ -28,6 +28,16 @@ const useStyles = makeStyles({
     left: 100,
     zIndex: 100,
   },
+  viewSwitch: {
+    position: 'fixed',
+    top: '75%',
+    left: 100,
+    zIndex: 100,
+    background: "transparent",
+    width: '56px',
+    height: '56px',
+    borderRight: 0, // 추후 오른쪽도 추가 할 것.
+  },
   '@media(max-width: 600px)': {
     box: {
       top: 5,
@@ -45,7 +55,6 @@ function index({}: Props) {
   const [modelUrl, setModelUrl] = useState('');
   const [icons, setIcons] = useState([]);
   const [isLoading, setLoading] = useState(true);
-  const [isInitialized, setInitialized] = useState(false);
   const [categories, setCategories] = useState([]);
   const [path, setPath] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('kor');
@@ -53,6 +62,8 @@ function index({}: Props) {
   const { id } = useParams<{ id: string }>();
   const [isShowLanguage, setIsShowLanguage] = useState(false);
   const [ogImage, setOgImage] = useState('');
+  const [isShowCategory, setIsShowCategory] = useState(false)
+
 
   /**
    * TODO. 배포시 prod로 설정하는 script 작성할 것.
@@ -63,12 +74,13 @@ function index({}: Props) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const querySnapshot = await firestore().collection(dev).where('title', '==', id).get();
-        const modelUrl = querySnapshot.docs[0].data().modelUrl;
-        const showLanguage = querySnapshot.docs[0].data().showLanguage;
+        const querySnapshot = await firestore().collection(prod).where('title', '==', id).get();
+        const { modelUrl, showLanguage, ogImage, isShowCategory} = querySnapshot.docs[0].data()
+
         setModelUrl(modelUrl);
         setIsShowLanguage(showLanguage);
-        setOgImage(querySnapshot.docs[0].data().ogImage);
+        setOgImage(ogImage);
+        setIsShowCategory(isShowCategory)
         setLoading(false);
 
         const path = querySnapshot.docs[0].ref.path;
@@ -140,7 +152,6 @@ function index({}: Props) {
         : id === 'daejeon'
         ? initDaejeon(canvas.current, modelUrl, icons)
         : '';
-      // initialize(canvas.current, modelUrl, icons);
     }
   }, [canvas, modelUrl, icons]);
 
@@ -175,7 +186,7 @@ function index({}: Props) {
               </ToggleButtonGroup>
             </div>
           )}
-          {categories.length > 0 && <Category value={categories} />}
+          {categories.length > 0 && <Category value={categories} isShowCategory={isShowCategory}/>}
           <div style={{ width: '100%', height: '100%', position: 'absolute', right: 0 }}>
             <canvas
               ref={canvas}

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { Vector3 } from "three";
+import { printLogObj } from "@utils/printLog";
 
 export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, icons: any) {
   // Canvas
@@ -45,8 +47,8 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   const pointer = new THREE.Vector2();
 
   //Distance, Vector3
-  // const plane = new THREE.Plane();
-  // const planeNormal = new THREE.Vector3();
+  const plane = new THREE.Plane();
+  const planeNormal = new THREE.Vector3();
 
   // Lights
   // 전역으로 빛 방출
@@ -304,4 +306,5 @@ export default function loadModel(canvas: HTMLCanvasElement, modelUrl: string, i
   window.addEventListener('resize', resizeCanvas);
   window.addEventListener('mousemove', mouseMoveListener);
   window.addEventListener('click', mouseUpListener);
+  // window.addEventListener('click', clickListener)
 }

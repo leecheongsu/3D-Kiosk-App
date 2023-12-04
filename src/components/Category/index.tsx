@@ -5,7 +5,7 @@ import CategoryParent from '@components/Category/Parent';
 
 const Container = styled.div`
   position: absolute;
-  top: 30%;
+  top: 20%;
   z-index: 1000;
   font-size: 16px;
   font-weight: 700;
@@ -14,7 +14,7 @@ const Container = styled.div`
   //-webkit-animation: forwards 3s; /* Safari and Chrome */
 `;
 
-function CategoryContainer({ value }) {
+function CategoryContainer({ value, isShowCategory }) {
   const [isShow, setShow] = useState(false);
   const [parent, setParent] = useState([]);
   const [children, setChildren] = useState([]);
@@ -41,9 +41,10 @@ function CategoryContainer({ value }) {
       setParent(sorted);
       setChildren(pIdData);
       /**
-       *  추후 리팩토링 할 것.
+       *  TODO. 리팩토링
        */
       setIsLeftAlign(topLevel[0].leftAlign);
+      setShow(isShowCategory);
     } catch (e) {
       console.error('There is no data', e);
     }

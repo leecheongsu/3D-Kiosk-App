@@ -11,6 +11,10 @@ const Container = styled(Dialog)`
   .MuiBackdrop-root {
     background-color: transparent;
   }
+  .css-11qlgps-MuiPaper-root-MuiDialog-paper {
+    margin: 0;
+    max-height: 100vh;
+  }
 `;
 
 const useStyles = makeStyles({
@@ -18,8 +22,8 @@ const useStyles = makeStyles({
     height: '100vh',
     minWidth: '500px',
     maxWidth: '20vw',
-    position: 'absolute',
-    right: 10,
+    position: 'fixed',
+    right: 0,
     top: 0,
     boxShadow: 'none',
     transition: 'ease-in',
@@ -35,7 +39,8 @@ const useStyles = makeStyles({
   closeBtnContainer: {
     position: 'fixed',
     zIndex: 9999,
-    right: '550px',
+    right: '520px',
+    top: '10px',
   },
   parentTitle: {
     fontSize: "1rem",
@@ -81,7 +86,7 @@ const useStyles = makeStyles({
     width: '100px',
     height: '100px',
     marginLeft: '25px',
-    marginTop: '25px',
+    marginTop: '45px',
   },
   imageContainer: {
     position: 'relative',

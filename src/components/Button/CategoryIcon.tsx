@@ -12,7 +12,7 @@ const CategoryIconButton = styled((props) => (
     <DehazeRounded sx={{ color: '#fff' }} />
   </IconButton>
 ))<{ isLeftAlign?: boolean }>`
-  ${(props) => (props.isLeftAlign ? 'left: 43px;' : 'right: 43px;')}
+  ${(props) => (props.isLeftAlign ? 'left: 3vw;' : 'right: 3vw;')}
   margin-top: -33px;
   width: 56px;
   height: 56px;
@@ -20,13 +20,13 @@ const CategoryIconButton = styled((props) => (
   border-radius: 100px;
   transition: all 0.2s;
   z-index: 100;
-  position: absolute;
+  position: fixed;
   top: 50%;
   padding: 0;
 
   &::after {
     content: '';
-    position: absolute;
+    position: fixed;
     top: 50%;
     width: 0;
     height: 0;

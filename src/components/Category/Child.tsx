@@ -24,6 +24,7 @@ const BtnStyle = {
   width: '100%',
   marginBottom: '8px',
   justifyContent: 'left',
+  textAlign: 'left',
   transition: 'background-color 0.3s ease',
   padding: '10px',
   color: '#fff',
@@ -37,25 +38,25 @@ function CategoryChild({ value }) {
   const open = Boolean(anchorEl);
   const [children, setChildren] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalValue, setModalValue] = useState({})
+  const [modalValue, setModalValue] = useState({});
 
   useEffect(() => {
     const sorted = [...value].sort((a, b) => a.order - b.order);
     setChildren(sorted);
+
+
   }, []);
   const handleClick = (e, v) => {
     setAnchorEl(e.currentTarget);
-    /**
-     *  모달이 있는지만 체크 할 것.
-     */
     if (v.type === ACTION.SIDE_MODAL) {
       setIsModalOpen(true);
-      setModalValue(v)
+      setModalValue(v);
     }
   };
   /**
-   * 추후 리팩토링 할 것.
+   *  TODO. 리팩토링
    */
+
   return (
     <Child>
       {children.map((v) => (
@@ -67,20 +68,18 @@ function CategoryChild({ value }) {
           aria-expanded={open ? 'true' : undefined}
           onClick={(e) => handleClick(e, v)}
           sx={BtnStyle}
-          target="_blank"
-          component={Link}
-          to={v.linkUrl}
+          component={v.type === ACTION.NEW_WINDOW_LINK ? Link : undefined}
+          to={v.type === ACTION.NEW_WINDOW_LINK ? v.linkUrl : undefined}
         >
           {v.title}
-        </Button>
-      ))}
+        </Button>))}
       {isModalOpen && (
         <Modal
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           value={modalValue}
           actions={
-            <Button onClick={() => setIsModalOpen(false)} color="primary" >
+            <Button onClick={() => setIsModalOpen(false)} color="primary">
               Close
             </Button>
           }
